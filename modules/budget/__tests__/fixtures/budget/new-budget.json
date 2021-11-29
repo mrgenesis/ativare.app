@@ -1,0 +1,9 @@
+{
+  "productsList": [
+    {"productCode":"P1","_id":"6187be88307e7844181f15af","name":"Produto teste","description":"Breve descrição sobre o produto.","materials":[{"code":6,"_id":"60084f7d1bf3d6357876f8a9","name":"Key Pad Multiplexado","charge":2},{"code":8,"_id":"600850281bf3d6357876f8ab","name":"Multiplexador","charge":3}],"category":"Automação","group":"Sensor","floor":"Térreo","homeLocationName":"Sala","amount":2},
+    {"productCode":"P1","_id":"6187be88307e7844181f15af","name":"Produto teste","description":"Breve descrição sobre o produto.","materials":[{"code":6,"_id":"60084f7d1bf3d6357876f8a9","name":"Key Pad Multiplexado","charge":2},{"code":8,"_id":"600850281bf3d6357876f8ab","name":"Multiplexador","charge":3}],"category":"Automação","group":"Sensor","floor":"2º Pavimento","homeLocationName":"Área","amount":1},
+    {"productCode":"P1","_id":"6187be88307e7844181f15af","name":"Produto teste","description":"Breve descrição sobre o produto.","materials":[{"code":6,"_id":"60084f7d1bf3d6357876f8a9","name":"Key Pad Multiplexado","charge":2},{"code":8,"_id":"600850281bf3d6357876f8ab","name":"Multiplexador","charge":3}],"category":"Automação","group":"Sensor","floor":"3º Pavimento","homeLocationName":"Quarto","amount":2}
+  ],
+  "customer":{"phone":"6598585855","name":"Nome do cliente","email":"e@mail.com"},
+  "ownId":"5fd2285747dc23001b826939"
+}
