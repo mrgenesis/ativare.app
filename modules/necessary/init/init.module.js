@@ -4,9 +4,10 @@ class InitModule {
   #report = {
     count: 0
   };
-  constructor(tools) {
+  constructor({ tools, appConfig }) {
     this.report('initClass', 'The class "InitModule"  has been intenced.');
     this.tools = tools;
+    this.appConfig = appConfig;
     this.models = {
       counter: tools.mongooseCounterModel
     };
@@ -15,26 +16,30 @@ class InitModule {
   }
   
   configure() { 
-    this.setLocalEnvironment();
-    const config = require('./init.config');
-    const ENVIRONMENT = process.env.NODE_ENV;
-    this.config = config(ENVIRONMENT);
+    this.ifIsLocalhostGetDotEnvInRootProject();
+    this.config = this.appConfig();
     this.report('configure', 'Getting config file for the approperty environment'); 
     return this;
   }
-  setLocalEnvironment() {
-    const Types = this.tools.types();    
-    if(Types.isUndefined(process.env.NODE_ENV)) {
-      require('dotenv').config({ path: __dirname + '/.env.development'});
-    } else {
-      this.report('setLocalEnvironment', 'Environment configured in prodution');      
-    }
+  ifIsLocalhostGetDotEnvInRootProject() {
+    if(this.isDevEnvironment()) { 
+      const r = require('dotenv').config({ path: this.appConfig.getDotEnvDev() });
+    } 
+  }
+  isDevEnvironment(){
+    // if NODE_ENV is undefined and .env.development is set on root project
+    // the app set localhost mode
+    const NODE_ENV = process.env.NODE_ENV
+        , Types = this.tools.types()
+        , dotEnvDevPath = this.appConfig.getDotEnvDev()
+        , { existsSync } = require('fs');
+    return Types.isUndefined(NODE_ENV) && existsSync(dotEnvDevPath);
   }
   make(app) {
-    this.requireModules(this.config.modulesPath);
+    this.requireModules(this.config.modulesFolder);
 
-    this.dataModules.modules.map(async Module => {
-      return this.loader(app)[Module.type](Module);
+    this.dataModules.modules.map(Module => {
+      this.loader(app)[Module.type](Module);
     });
   }
   report(property, msg) {

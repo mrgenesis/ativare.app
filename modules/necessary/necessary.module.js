@@ -11,10 +11,12 @@ function Tools() {
 }
 
 Tools.init = function init(app) {
+  
   const tools = new Tools();  
-
+  const appConfig = require('../../app.config');
   const InitModule = require('./init/init.module');
-  const initModule = new InitModule(tools);
+  const initModule = new InitModule({ tools, appConfig });
+
 
   initModule
     .configure()
