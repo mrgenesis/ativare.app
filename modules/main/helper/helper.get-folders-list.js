@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function getFoldersList({ pathFolder, withPath }) {
+function getFoldersList({ pathFolder, withPath }) {
   const fs = require('fs');
 
   let result = [];
@@ -16,3 +16,5 @@ module.exports = function getFoldersList({ pathFolder, withPath }) {
   return result;
 
 }
+getFoldersList.priority = 1;
+module.exports = getFoldersList;

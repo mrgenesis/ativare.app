@@ -1,14 +1,16 @@
 'use strict';
 
-module.exports = function loader(app) {  
-  const initModule = this;
-  const tools = initModule.tools;
-  return {
+class Loader {  
+
+
+  constructor() {
+
+  }
     async database(Module) {
       await Module.init(initModule.config.databases[Module.brand]);
       initModule.report('database', `${Module.brand} init successful.`); 
-    },
-    route(Module) {
+    }
+    resource(Module) {
       const module = new Module();
       const modelName = Object.getOwnPropertyDescriptor(module.model, 'name').value;
 
@@ -20,18 +22,23 @@ module.exports = function loader(app) {
       module.tools = initModule.tools;
       initModule.report('route', `Added "${initModule
         .tools.constructor.name}" in ${module.constructor.name} Module.`);
-
+        
         module.errorModuleFactory = module.tools.errorModuleFactory
         module.errorModuleFactory();
         delete module.errorModuleFactory;
+        
+        initModule.resourcesNames[module.constructor.name] = {};
 
       module.controller(app);
       initModule.report('route', `Load ${module.constructor.name}`); 
-    },
+    }
+    models(Module) {
+      initModule.models = { ...initModule.models, ...(new Module()) };
+    }
     noDefault(Module, param) {
       Module.init(Module, param);
-    },
-    'undefined': function(m) {
+    }
+    'undefined'(m) {
       const isTools = Object.getOwnPropertyDescriptor(m, 'name').value === 'Tools'
 
       if(isTools) {
@@ -42,6 +49,8 @@ module.exports = function loader(app) {
       console.log('\t>> Module without property type')
       console.log('\t\t>> Const: ', Object.getOwnPropertyDescriptor(m, 'name').value)
     }
-  }
+
 };
+
+module.exports = Loader;
 

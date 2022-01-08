@@ -29,4 +29,5 @@ function getFilesList(folderPath, { ext = '.js', ignore, withPath } = {}) {
   return result;
 }
 
+getFilesList.priority = 1;
 module.exports = getFilesList;

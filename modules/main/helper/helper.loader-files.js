@@ -1,12 +1,12 @@
 'use strict';
 
-const getFilesList = require('./utils.get-files-list');
+const getFilesList = require('./helper.get-files-list');
 
-module.exports = function loaderFiles({ 
+function loaderFiles({ 
   loadHere = {}, 
   folder = __dirname, 
-  ignore = ['utils.module.js'],
-  removeTxt = /utils\.|\.js/g,
+  ignore = ['helper.module.js'],
+  removeTxt = /helper\.|\.js/g,
   separator = '-',
   othes = {}
 }) {
@@ -27,3 +27,5 @@ module.exports = function loaderFiles({
   });
 
 }
+loaderFiles.priority = 2;
+module.exports = loaderFiles;

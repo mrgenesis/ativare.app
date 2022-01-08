@@ -1,10 +1,9 @@
 'use strict';
 
-module.exports = function getFolders(pathFolder) {
+function getFolders(pathFolder, ignoreList) {
   const fs = require('fs');
 
   let namesList = [];
-  let withPath = [];
 
   namesList = fs.readdirSync(pathFolder, { withFileTypes: true })
     .filter(item => item.isDirectory())
@@ -16,7 +15,13 @@ module.exports = function getFolders(pathFolder) {
     },
     pathNamesList() {
       return foldersList.map(folder => `${pathFolder}/${folder}`);
+    },
+    ignore(list = ignoreList) {
+      namesList = namesList.filter(name => list.indexOf(name) === -1);
+      return this;
     }
   };
 
 }
+getFolders.priority = 1;
+module.exports = getFolders;

@@ -1,14 +1,14 @@
 'use strict';
 
-module.exports = function generateNameOf(fileName, { options: { limiterOfName = '.', separator = '-' } = {} } = {}) {
-  const tools = this;
-  const Types = tools.types();
+function generateNameOf(fileName, { options: { isFirstLetterUpper = false, limiterOfName = '.', separator = '-' } = {} } = {}) {
+  const Helper = this;
+  const Types = Helper['helper.types.js']();
   let name, twoChars, oneLetter, separatorPosition, oneLetterUpper;
 
   return (function init() {
     return {
       getStartAndEndIndex() {
-        const indexes = tools.allIndexesOf(limiterOfName, fileName);
+        const indexes = Helper['helper.all-indexes-of.js'](limiterOfName, fileName);
         Types.isUndefined(indexes[1])
         ? this.indexes = { start: 0, end: indexes[0] }
         : this.indexes = { start: indexes[0] + 1, end: indexes[1] };
@@ -16,7 +16,13 @@ module.exports = function generateNameOf(fileName, { options: { limiterOfName = 
       },
       cleanName() {
         name = fileName.slice(this.indexes.start, this.indexes.end);
+        this.firstLetterUpper();
         return this;
+      },
+      firstLetterUpper() {
+        if(isFirstLetterUpper) {
+          name = name.replace(name[0], name[0].toUpperCase());
+        }
       },
       getNameFunction() {
         while (this.haveSeparator()) {
@@ -55,3 +61,5 @@ module.exports = function generateNameOf(fileName, { options: { limiterOfName = 
   .cleanName()
   .getNameFunction(); 
 }
+generateNameOf.priority = 3;
+module.exports = generateNameOf;

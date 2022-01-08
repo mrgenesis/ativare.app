@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function types() {
+function types() {
   class TypesModule {
     deepTypeof(mixed) {
       const type = typeof mixed;
@@ -55,3 +55,6 @@ module.exports = function types() {
 
   return new TypesModule();
 }
+
+types.priority = 1;
+module.exports = types;

@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function comparator() {
+function comparator() {
   class ComparatorModule {
     areDeeplyEquals(something, isDeepEqual) {
       return something === isDeepEqual;
@@ -12,3 +12,5 @@ module.exports = function comparator() {
 
   return new ComparatorModule();
 }
+comparator.priority = 1;
+module.exports = comparator;

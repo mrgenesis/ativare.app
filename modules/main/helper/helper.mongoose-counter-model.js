@@ -3,7 +3,6 @@
 
 const mongoose = require('mongoose');
 
-
 function mongooseCounterModel() {
   if (mongooseCounterModel.cache) return mongooseCounterModel.cache;
   const counterSchema = new mongoose.Schema({
@@ -16,4 +15,6 @@ function mongooseCounterModel() {
   mongooseCounterModel.cache = Counter;
   return mongooseCounterModel.cache;
 }
+
+mongooseCounterModel.priority = 1;
 module.exports = mongooseCounterModel;

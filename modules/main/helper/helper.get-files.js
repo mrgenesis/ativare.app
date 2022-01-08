@@ -9,8 +9,8 @@ const
  * @returns {Object} - o objeto dos nomes dos arquivos do diretório informado
  */
 function getFiles(folderPath) {
-  const Util = this;
-  const ComparatorModule = Util.comparator();
+  const Helper = this;
+  const ComparatorModule = Helper.comparator();
   const result = { list: [], requireds: {}, names: [], resultOfRunAll: {}, withPathList: [] };
   
   result.list = fs.readdirSync(folderPath);
@@ -36,10 +36,10 @@ function getFiles(folderPath) {
       result.withPathList = result.withPathList.filter(fileName => list.join('#').indexOf(fileName) === -1);
       return this;
     },
-    requireAll() {
+    requireAll({ generateNameOf = Helper.generateNameOf, putHere = result.requireds } = {}) {
       this.list().forEach(file => {
-        const name = Util.generateNameOf(file);
-        result.requireds[name] = require(`${folderPath}/${file}`);
+        const name = generateNameOf(file);
+        putHere[name] = require(`${folderPath}/${file}`);
         result.names.push(name);
       });
       return this;
@@ -56,4 +56,5 @@ function getFiles(folderPath) {
   };
 }
 
+getFiles.priority = 3;
 module.exports = getFiles;

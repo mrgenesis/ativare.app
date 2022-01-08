@@ -2,10 +2,10 @@
 
 const ROOT_PROJECT = __dirname;
 
-function appConfig() {
+function appConfig(context) {
   const path = require('path')
       , fs = require('fs')
-      , Types = this.tools.types();
+      , Types = context.Helper.types();
   let customConfig = {};
 
   const CUSTOM_CONFIG_FILE_NAME = process.env.CUSTOM_CONFIG_FILE_NAME;
@@ -29,6 +29,9 @@ function appConfig() {
     },
     "rootProject": ROOT_PROJECT,
     "modulesFolder": `${ROOT_PROJECT}/modules`,
+    "dotEnvDev": `${ROOT_PROJECT}/.env.development`,
+    "appFolderName": 'express-app',
+    // mainModuleFolderPath,
     ...customConfig
   }
 }

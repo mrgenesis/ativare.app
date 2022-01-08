@@ -13,5 +13,5 @@ function allIndexesOf(value, iterable) {
   }
   return indexes;
 }
-
+allIndexesOf.priority = 1;
 module.exports = allIndexesOf;
