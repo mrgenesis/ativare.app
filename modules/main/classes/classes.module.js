@@ -2,15 +2,13 @@
 
 class Classes {
   constructor(context) {
-    const { Helper } = context
+    const { Helper } = context;
 
-    function generateNameOf(folderName) {
-      return Helper.generateNameOf(folderName, { options: { isFirstLetterUpper: true }});
-    }
-    
     Helper
       .getFiles(__dirname)
-      .requireAll({ putHere: this, generateNameOf });
+      .ignore([require('path').basename(__filename)])
+      .requireAll({ isFirstLetterUpper: true  })
+      .put({ here: this });
   }
 }
 

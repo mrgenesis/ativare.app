@@ -36,12 +36,18 @@ function getFiles(folderPath) {
       result.withPathList = result.withPathList.filter(fileName => list.join('#').indexOf(fileName) === -1);
       return this;
     },
-    requireAll({ generateNameOf = Helper.generateNameOf, putHere = result.requireds } = {}) {
+    requireAll(options = {}) {
       this.list().forEach(file => {
-        const name = generateNameOf(file);
-        putHere[name] = require(`${folderPath}/${file}`);
+        const name = Helper.generateNameOf(file, options);
+        result.requireds[name] = require(`${folderPath}/${file}`);        
         result.names.push(name);
       });
+      return this;
+    },
+    put({ here, property = 'requireds' } = {}) {
+      for (let i in result[property]) {
+        here[i] = result[property][i];
+      }
       return this;
     },
     runAll(param) {

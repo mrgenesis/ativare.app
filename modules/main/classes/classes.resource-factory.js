@@ -5,6 +5,7 @@ class ResourceFactory {
   #src = {};
   #services = {};
   #entry = '';
+  #types = ['r', 'w', 'u', 'd'];
   constructor(name){
     this.#name = name.replace('Module', '');
     this.#entry = `/${this.#name.toLowerCase()}`;

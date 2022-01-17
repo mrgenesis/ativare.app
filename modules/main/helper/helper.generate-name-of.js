@@ -1,6 +1,6 @@
 'use strict';
 
-function generateNameOf(fileName, { options: { isFirstLetterUpper = false, limiterOfName = '.', separator = '-' } = {} } = {}) {
+function generateNameOf(fileName,  { isFirstLetterUpper = false, limiterOfName = '.', separator = '-' } = {} = {}) {
   const Helper = this;
   const Types = Helper['helper.types.js']();
   let name, twoChars, oneLetter, separatorPosition, oneLetterUpper;
