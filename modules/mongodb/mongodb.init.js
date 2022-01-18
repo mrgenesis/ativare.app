@@ -5,7 +5,8 @@ module.exports = async function init(mongooseConfig){
   const options = {
     promiseLibrary: require('bluebird'),
     useUnifiedTopology: true,
-    useNewUrlParser: true
+    useNewUrlParser: true,
+    useCreateIndex: true
   }
   , connectionString = this.prepateConnectionString(mongooseConfig);
 
