@@ -1,66 +1,35 @@
 'use strict';
 
 class ResourceFactory {
-  #name = '';
+  #localName;
   #src = {};
-  #services = {};
-  #entry = '';
-  #types = ['r', 'w', 'u', 'd'];
-  constructor(name){
-    this.#name = name.replace('Module', '');
-    this.#entry = `/${this.#name.toLowerCase()}`;
+  constructor({ ...props } = {}){
+    this.#src.arn = `${props.name}_${props.service.name}@${props.moduleName}_${props.type.toLowerCase()}`;
+    this.#localName = `${props.name}_${props.type.toLowerCase()}`;
+    this.#src.name = `${props.name}`;
+    this.#src.method = `${props.method}`;
+    this.#src.service = props.service.exec;
+    this.#src.displayDescription = props.service.displayDescription;
+    this.#src.relativePath = `/${props.name}`;
+    this.#src.endpoint = `/${props.moduleName.toLowerCase()}${this.configurePath(props.name)}`;
   }
-
-  getName() {
-    return this.#name;
+  getTest() { // TODO: remove
+    console.log(this.#src);
   }
-  getEntry() {
-    return this.#entry;
+  configurePath(name) {
+    return (name === '') ? '' : `/${name}`;
   }
-  getResource(localName) {
-    return { ...this.#src[localName] };
+  getData() {
+    return this.#src.data;
   }
-  getResourcesAll() {
-    return { ...this.#src };
+  middlewareSet({ propertyName, data }) {
+    this.#src[propertyName] = data;
   }
-  setResource({ name = '', type = '', method = '', ...props }) { 
-    const localName = `${name}.${type}`;
-    this.#src[localName] = {};
-    this.#src[localName].method = method.toLowerCase();
-    this.#src[localName].arn = `${name}.${props.service}@${this.#name}.${type.toLowerCase()}`;
-    this.#src[localName].relativePath = `/${name}`;
-    this.#src[localName].path = `${this.#entry}/${name}`;
-    this.#src[localName].service = this.getService(`${props.service || name}@${this.#name}.${type.toLowerCase()}`);
+  get(propertyName) {
+    return this.#src[propertyName];
   }
-  setResources(arr) {
-    arr.forEach(routeConfig => {
-      this.setResource(routeConfig);
-    });
-  }
-  setService({ name, ...props }) {
-    this.#services[`${name}@${this.#name}.${props.type}`] = {
-      name, ...props
-    }
-  }
-  setServices(arr) {
-    arr.forEach(service => {
-      this.setService(service);
-    });
-  }
-  getService(service = '') {
-    return this.#services[service];
-  }
-  getServices(services = []) {
-    return services.reduce((acc, service) => {
-      const exist = this.#services[`${this.#name}:${service}`]
-      if(exist) {
-        acc[`${this.#name}:${service}`] = exist;
-      }
-      return acc;
-    }, {})
-  }
-  getServicesAll() {
-    return this.#services;
+  getLocalName() {
+    return this.#localName;
   }
 }
 
