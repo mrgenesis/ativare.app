@@ -1,19 +1,17 @@
 'use strict';
 
 class InitSystem {
+  #AppModule;
   #context = {};
-  #report = {
-    count: 0
-  };
-  #app = {};
   #modulesRequired = [];
   constructor(context) { 
     this.#context = context;
     this.applicationResources = {};
-    this.#context.models = {};
+    this.#context.model = {};
+    this.#context.middleware = {};
   }
   getApp() {
-    return this.#app;
+    return this.#AppModule.getApp();
   }
   
   configure(appConfigPath) { 
@@ -38,39 +36,23 @@ class InitSystem {
     return Types.isUndefined(NODE_ENV) && existsSync(this.dotEnvDevPath);
   }
   createApp() {
-    const appFolderPath = `${this.config.modulesFolder}/express-app/express-app.module.js`;
-    const ExpressApp = require(appFolderPath);
-    const expressApp = new ExpressApp(this.#context);
-    this.#app = expressApp.getApp();
+    const appFolderPath = `${this.config.modulesFolder}/${this.config.appFolderName}/${this.config.appFolderName}.module.js`;
+    const AppModule = require(appFolderPath);
+    this.#AppModule = new AppModule(this.#context);
   }
-  make() {
+  async make() {
     this.requireModules(this.config.modulesFolder);
 
+    await this.loadDatabase();
     this.loadModels();
-    this.#modulesRequired.map(Module => {
-      try {
-        const Types = this.#context.Helper.types();
-        this.#app.set('applicationResources', this.applicationResources);
-        const M = { ...Module }; // TODO: Estudar o motivo que essa linha evita circular dependência
-        if(Types.isFunction(this.loader(this.#app)[M.type])) {
-          this.loader(this.#app)[M.type](Module);
-        } else {
-          console.warn(`${__filename} #Warnnig: Não há função para carregar o módulo <${Object.getOwnPropertyDescriptor(Module, 'name').value}>. Type: ${M.type}.`);
-        }
-      } catch (e) {
-        // TODO: tratar o erro
-        // Exemplo:
-        // this.error.internalError(e);
-        console.error(`${__filename} #Error: O carregamento do módulo <${Object.getOwnPropertyDescriptor(Module, 'name').value}> falhou.`);
-      }
-    });
+    this.loadRoutes();
 
   }
   loadModels() {
     this.#modulesRequired.forEach(m => {
       const M = { ...m };
-      if (M.type === 'models') {
-        this.#context.models = new m();
+      if (M.type === 'model') {
+        this.#context.model = new m();
       }
     });
   }
@@ -83,46 +65,37 @@ class InitSystem {
       this.#modulesRequired.push(Module);
     });
   }
-  loader(app){
+  loadDatabase() {
+    const databaseModule = this.#modulesRequired.filter(Module => Module.type === 'database')[0];
+    return databaseModule.init(this.config.databases[databaseModule.brand]);
+  }
+  loadRoutes() {
     const InitSystem = this;
-    return {
-      async database(Module) {
-        return Module.init(InitSystem.config.databases[Module.brand]);
-      },
-      route(Module) {
-        const { AppError } = InitSystem.#context;
-        const module = new Module(InitSystem.#context);
-        const modelName = Object.getOwnPropertyDescriptor(module.model, 'name').value.replace(/model/i, '');
-
-        InitSystem.#context.models[modelName] = module.model;
+    for (const getModule of this.#modulesRequired) {
+      if(getModule.type === 'route') {
+        try {
+          var Module = getModule(InitSystem.#context.Classes.RouterAux);
+          const { AppError } = InitSystem.#context;
+          const module = new Module(InitSystem.#context);    
           
-        
-        module.errorModuleFactory = AppError.errorModuleFactory;
-        module.errorModuleFactory();
-        
-        module.controller(app);
-      },
-      noDefault(Module, param) {
-        Module.init(Module, param);
-      },
-      none(m) {
+          InitSystem.#AppModule.setRoute(module);
+          InitSystem.#AppModule.setApplicationResources(module);
 
-      },
-      // 'undefined': function(m) {
-
-      //   console.log('################ Warnnig... ################')
-      //   console.log('\t>> Module without property type')
-      // }
+        } catch (e) {
+          const OthersUtils = this.#context.Helper.othersUtils();
+          const moduleName = Object.getOwnPropertyDescriptor(Module || getModule, 'name').value;
+          // TODO: tratar o erro
+          // Exemplo:
+          // this.error.internalError(e);
+          OthersUtils.log(`InitSystem-loadRoutes-${moduleName}`, `O carregamento do módulo <${moduleName}> falhou.`);
+          OthersUtils.log(`InitSystem-loadRoutes-${moduleName}`, 'Error in loadRoutes:', [e]);
+        }
+      }
+      
     }
   }
-  report(property, msg) {
-    this.#report[++this.#report.count] = {
-      stepName: property,
-      msg
-    }
-  }
-  getReport() {
-    return this.#report;
+  setApplicationResources(module) {
+    this.applicationResources[module.name] = module.resources();
   }
 }
 
