@@ -1,70 +1,71 @@
 'use strict';
 
 class ResourceManager {
-  #name = '';
-  #context;
-  #resources = {};
-  #services = {};
-  #entry = '';
-  constructor(name, context){
-    this.#name = name.replace('Module', '');
+  #context; #services; #middleware; #folderPath; #module;
+  #resource = {};  
+  constructor({ module, context, folderPath }){
+    this.#module = module;
     this.#context = context;
-    this.#entry = `/${this.#name.toLowerCase()}`;
+    this.#folderPath = folderPath;
+    
+    const model = this.requireItem(module.lowerCaseName, 'model');
+    this.#context.model.setModel(module.lowerCaseName, model);
+    
+    const service = this.requireItem(module.lowerCaseName, 'service');
+    this.setService(service);
+
+    const middleware = this.requireItem(module.lowerCaseName, 'middleware');
+    this.setMiddleware(middleware);
+    
+    const routes = this.requireItem(module.lowerCaseName, 'routes');
+    this.setResources(routes);
+
   }
-  setContext(context) {
-    this.#context = context;
+  requireItem(moduleName, name) {
+    return require(`${this.#folderPath}/${moduleName}.${name}`)(this.#context);
+  }
+  setService(service) {
+    this.#services = service;
+  }
+  setMiddleware(middleware) {
+    this.#middleware = middleware;
   }
 
-  getName() {
-    return this.#name;
-  }
-  getEntry() {
-    return this.#entry;
-  }
-  getResource(localName) {
-    return this.#resources[localName];
-  }
   getResourcesAll() {
-    return { ...this.#resources };
+    return this.#resource;
   }
-  setResource({ ...props }) { 
-    const service = this.getService(`${props.service || props.name}@${this.#name}_${props.type.toLowerCase()}`);
-    const { ResourceFactory } = this.#context.Classes;
-    const resource = new ResourceFactory({ ...props, service, moduleName: this.#name });
-    this.#resources[resource.getLocalName()] = resource;
-  }
-  setResources(arr) {
-    arr.forEach(srcConfig => {
-      this.setResource(srcConfig);
+  setResources(routes) {
+    routes.forEach(route => {
+      this.setResource(route);
     });
   }
-  setServices(arr) {
-    arr.forEach(service => {
-      this.setService(service);
-    });
+  setResource(route) { 
+    route.setModuleLowerCaseName(this.#module.lowerCaseName);
+    this.setServiceInRoute(route);
+    this.setMiddlewareInRoute(route);
+    this.generateApplicationResourceName(route);
+    debugger;
+    this.#resource[route.srcName] = route;
   }
-  setService({ ...props }) {
-    this.#services[this.generateServiceName(props)] = {
-      ...props
-    }
+
+  setServiceInRoute(route = {}) {
+    route.setService(this.#services[route.serviceName]);
   }
-  generateServiceName(props) {
-    return `${props.name}@${this.#name}_${props.type}`;
-  }
-  getService(service = '') {
-    return this.#services[service];
-  }
-  getServices(services = []) {
-    return services.reduce((acc, service) => {
-      const exist = this.#services[`${this.#name}:${service}`]
-      if(exist) {
-        acc[`${this.#name}:${service}`] = exist;
+  setMiddlewareInRoute(route = {}) {
+    const GlobalMiddlewares = this.#context.Middleware;
+    return route.middlewaresNamesList.map(name => {
+      if (GlobalMiddlewares.getModuleMiddleware(name)) {
+        route.setMiddleware(GlobalMiddlewares.getModuleMiddleware(name));
+        return;
       }
-      return acc;
-    }, {})
+      if (this.#middleware[name]) {
+        route.setMiddleware(this.#middleware[name]);
+      }
+    });    
   }
-  getServicesAll() {
-    return this.#services;
+  generateApplicationResourceName(route) {    
+    const arn = `${route.name}_${route.serviceName}@${this.#module.name}_${route.type}`;
+    route.setApplicationResourceName(arn);
   }
 }
 
