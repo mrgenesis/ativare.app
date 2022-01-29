@@ -1,16 +1,15 @@
 'use strict';
 
 function execAccessAnalyzer(context) {
-  return function setDependencies(resource, CurrentModule){
-    console.log('<<<< ...setDependencies >>>', resource);
-
+  function accessAnalyzer(src) {
+    console.log('<<<< ...accessAnalyzer src.name >>>', src.name);
     return function accessAnalyzer(req, res, next) {
-      resource.middlewareSet({ propertyName: 'accessAnalyzer', data: 'olá' })
-      console.log('<<<< ...accessAnalyzer >>>');
-      next();
+    console.log('<<<< ...accessAnalyzer running... src.name >>>', src.name);
+    next();
     }
-    
   }
+  accessAnalyzer.type = 'module';
+  return accessAnalyzer;
 }
 
 module.exports = execAccessAnalyzer;
