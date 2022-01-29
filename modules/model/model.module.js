@@ -5,7 +5,10 @@ class Model {
     this.counter = require('./model.counter');
     this.group = require('./model.group');
   }
+  setModel(name, model) {
+    this[name] = model;
+  }
 }
 
-Model.type = 'models';
+Model.type = 'model';
 module.exports = Model;
