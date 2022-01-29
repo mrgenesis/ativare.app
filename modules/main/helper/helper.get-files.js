@@ -52,7 +52,12 @@ function getFiles(folderPath) {
     },
     runAll(param) {
       result.names.forEach(name => {
-        result.resultOfRunAll[name] = result.requireds[name](param);
+        const runned = result.requireds[name](param);
+        if (runned.name) {
+          result.resultOfRunAll[runned.name] = runned;
+          return;
+        }
+        result.resultOfRunAll[name] = runned;
       });
       return result.resultOfRunAll;
     },
