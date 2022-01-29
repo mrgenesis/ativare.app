@@ -27,6 +27,9 @@ function types() {
     isFunction(fn) {
       return typeof fn === 'function';
     }
+    isNotFunction(x) {
+      return !this.isFunction(x);
+    }
 
     isObject(obj) {
       return this.deepTypeof(obj) === 'object';
