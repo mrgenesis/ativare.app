@@ -1,11 +1,11 @@
 'use strict';
 
-module.exports = function materialMiddleware() {
-  const MaterialMiddlewares = {};
+module.exports = function materialMiddleware(context) {
+  const { Helper } = context;
 
-  MaterialMiddlewares.addMaterial = function addMaterial(req, res, next) {
-    next();
-  }
+  const Middlewares = Helper.getFiles(`${__dirname}/middleware`)
+    .requireAll()
+    .runAll(context);
 
-  return MaterialMiddlewares;
+  return Middlewares;
 }

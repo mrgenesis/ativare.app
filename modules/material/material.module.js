@@ -1,12 +1,15 @@
 'use strict';
 
-function MaterialModule() {};
+function setDependencie(RouterAux) {
 
-MaterialModule.type = 'route';
+  class Material extends RouterAux {
+    constructor(context) {
+      super({ folderPath: __dirname, context });
+    }
+  }
+  
+  return Material;
+}
 
-MaterialModule.prototype.controller = require('./material.controller');
-MaterialModule.prototype.materialMiddleware = require('./material.middleware');
-MaterialModule.prototype.materialService = require('./material.service');
-MaterialModule.prototype.model = require('./material.model');
-
-module.exports = MaterialModule;
+setDependencie.type = 'route';
+module.exports = setDependencie;

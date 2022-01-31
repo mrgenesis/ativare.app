@@ -1,11 +1,11 @@
 'use strict';
-module.exports = function materialModel() {
+module.exports = function materialModel(context) {
   if (materialModel.cache) {
     return materialModel.cache;
   }
   
   const mongoose = require('mongoose');
-  const Counter = this.models.counter();
+  const Counter = context.model.counter();
   
   const MaterialSchema = new mongoose.Schema({
     name: { type: String },
