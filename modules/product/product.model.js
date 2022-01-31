@@ -1,11 +1,12 @@
 'use strict';
 
-function productModel() {
+const mongoose = require('mongoose');
+
+function productModel(context) {
   if (productModel.cache) {
     return productModel.cache;
   }
-  const mongoose = require('mongoose');
-  const Counter = this.models.counter();
+  const Counter = context.model.counter();
 
   const ProductSchema = new mongoose.Schema({
     name: { type: String },

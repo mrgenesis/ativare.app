@@ -1,16 +1,9 @@
 'use strict';
 
-module.exports = function productService() {
-  const ProductModule = this;
-  const ProductModel = ProductModule.model();
-  const Tools = ProductModule.tools;
-  const servicePath = `${__dirname}/service`;
+module.exports = function productService(context) {
+  const { Helper } = context;
 
-  const funcs = Tools.getFiles(servicePath)
+  return Helper.getFiles(`${__dirname}/service`)
     .requireAll()
-    .runAll(ProductModel);
-
-  Object.setPrototypeOf(funcs, ProductModule);
-  return funcs;
-  
+    .runAll(context);  
 }

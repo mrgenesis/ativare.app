@@ -1,12 +1,13 @@
 'usre strict';
 
-function ProductModule() {}
-ProductModule.type = 'route';
+function setDependence(RouteAux) {
+  class Product extends RouteAux {
+    constructor(context) {
+      super({ folderPath: __dirname, context });
+    }
+  }
+  return Product;
+}
 
-ProductModule.prototype.controller = require('./product.controller');
-ProductModule.prototype.middleware = require('./product.middleware');
-ProductModule.prototype.model = require('./product.model');
-ProductModule.prototype.service = require('./product.service');
-
-module.exports = ProductModule;
-
+setDependence.type = 'route';
+module.exports = setDependence;
