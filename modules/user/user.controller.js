@@ -1,16 +1,12 @@
 'use strict';
 
-module.exports = function userController(app) {
-  const UserModule = this;
+module.exports = function userController(src) {
+  const { _r, register_w, authenticate_w, [':userCode_r']: userCode_r } = src;  
   const router = require('express').Router();
-  const UserMiddleware = UserModule.middleware();
-  const UserService = UserModule.service();
-
-  router.get('/', async (req, res) => {
-
-    try {
-      const users = await UserService.getAll();
   
+  router[_r.method](_r.relativePath, async (req, res) => {
+    try {
+      const users = await _r.service();
       if (!users)
         return res.status(204).send([]);
   
@@ -22,9 +18,10 @@ module.exports = function userController(app) {
     }
   });
    
-  router.post('/register', UserMiddleware.addUser, async function (req, res, next) {
+  router[register_w.method](register_w.relativePath, async function (req, res, next) {
     try {
-      const response = await UserService.createUser(req.body);
+      const response = await register_w.service(req.body);
+    
       res.status(201).json(response);
 
     } catch (err) {
@@ -32,21 +29,21 @@ module.exports = function userController(app) {
     }
   });
 
-  router.post('/authenticate', UserMiddleware.authUser, async function (req, res, next) {
+  router[authenticate_w.method](authenticate_w.relativePath, async function (req, res, next) {
     try {
       const { email, password } = req.body;
-      const response = await UserService.auth(email, password);
+      const response = await authenticate_w.service(email, password);
       res.status(201).json(response);
     } catch (err) {
       next(err);
     }
   });
 
-  router.get('/:userCode', async (req, res) => {
+  router[userCode_r.method](userCode_r.relativePath, async (req, res) => {
     const { userCode } = req.params;
   
     try {
-      const user = await UserService.findOne({ code: userCode });
+      const user = await userCode_r.service({ code: userCode });
       if (!user)
         return res.status(204).send({});
   
@@ -58,5 +55,5 @@ module.exports = function userController(app) {
     }
   });
 
-  app.use('/auth', router);
+  return router;
 };

@@ -1,21 +1,25 @@
 'use strict';
 
 
-module.exports = (UserModel) => { 
-  const bcrypt = require('bcryptjs');
+module.exports = function setContext(context) { 
+  const { Auth, ServiceFactory } = context.Classes;
+  const authc = new Auth();  
 
-  return async function auth(email, password) {
-    const user = await UserModel.findOne({ email }).select('+password');
+  async function auth(email, password) {
+    const user = await context.model.user.findOne({ email }).select('+password');
+
     if (!user) {
-      return { Error: 'User not found.' };
+      return 'User not found/Password invalid.';
     }
     
-    if (!await bcrypt.compare(password, user.password)) {
-      //throw UserModule.userError(401, 'user/pass incorrect');
+    if (!await authc.compare(password, user.password)) {
+      return 'User not found/Password invalid.';
     }
     
     delete user.password;
     
-    return { token: this.tools.generateToken({ ...user }) };
+    return authc.generateToken({ ...user });
   }
+
+  return new ServiceFactory(auth, 'w', 'Permite entrar com login de senha para visualizar as informações restritas.');
 };

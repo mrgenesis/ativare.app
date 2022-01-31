@@ -1,13 +1,9 @@
 'use strict';
 
-module.exports = function userService() {
-  const UserModule = this;
-  const servicePath = `${__dirname}/service`;
+module.exports = function userService(context) {
+  const { Helper } = context;
   
-  const UserService = UserModule.tools.getFiles(servicePath)
+  return Helper.getFiles(`${__dirname}/service`)
     .requireAll()
-    .runAll(UserModule.model());
-  
-  Object.setPrototypeOf(UserService, UserModule);
-  return UserService;
+    .runAll(context);
 };

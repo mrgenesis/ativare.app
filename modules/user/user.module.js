@@ -1,12 +1,14 @@
 
 'use strict';
 
-function UserModule() {}
-UserModule.type = 'route';
+function setContext(RouteAux) {
+  class User extends RouteAux {
+    constructor(context) {
+      super({ folderPath: __dirname, context });
+    }
+  }
+  return User;
+}
 
-UserModule.prototype.controller = require('./user.controller');
-UserModule.prototype.middleware = require('./user.middleware');
-UserModule.prototype.service = require('./user.service');
-UserModule.prototype.model = require('./user.model');
-
-module.exports = UserModule;
+setContext.type = 'route';
+module.exports = setContext;

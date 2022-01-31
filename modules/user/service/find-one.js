@@ -1,11 +1,13 @@
 'use strict';
 
-function findOne(UserModel) {
-  const UserModule = this;
+function setContext(context) {
+  const { ServiceFactory } = context.Classes;
 
-  return async function findOne(obj) {
-    return UserModel.findOne(obj)
+  function findOne(obj) {
+    return context.model.user.findOne(obj);
   }
+
+  return new ServiceFactory(findOne, 'r', 'Localiza um usuário com base no valor informado.');
 }
 
-module.exports = findOne;
+module.exports = setContext;
