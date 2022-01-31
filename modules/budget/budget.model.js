@@ -1,11 +1,11 @@
 
-module.exports = function budgetModel() {
+module.exports = function budgetModel(context) {
   if (budgetModel.cache) {
     return budgetModel.cache;
   }
   const mongoose = require('mongoose');
-  const NecessaryModule = require('../necessary/necessary.module');
-  const Counter = this.models.counter();
+  console.log('this.context.model', context.model)
+  const Counter = context.model.counter();
   
   const BudgetSchema = new mongoose.Schema({
     ownId: { type: String }, // TODO: essa propriedade será substituída por "own"

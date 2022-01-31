@@ -1,20 +1,16 @@
 'use strict';
 
-function BudgetModule() {
-  const report = {};
-  this.setReport = function setReport(property, data) {
-    report[property] = data;
+
+function setDependencie(RouterAux) {
+
+  class Budget extends RouterAux {
+    constructor(context) {
+      super({ folderPath: __dirname, context });
+    }
   }
-  this.getReport = function getReport() {
-    return report;
-  }
+  
+  return Budget;
 }
-BudgetModule.type = 'route';
 
-BudgetModule.prototype.controller = require('./budget.controller');
-BudgetModule.prototype.service = require('./budget.service');
-BudgetModule.prototype.middleware = function(){}
-BudgetModule.prototype.model = require('./budget.model');
-BudgetModule.prototype.materialModel = require('../material/material.module').materialModel;
-
-module.exports = BudgetModule;
+setDependencie.type = 'route';
+module.exports = setDependencie;

@@ -1,62 +1,41 @@
 'use strict';
 
-module.exports = function budgetController(app) {
-  const budgetModule = this;
+module.exports = function budgetController(src) {
   const router = require('express').Router();
-  console.log('[budgetController]: Controller executando');
-  const BudgetModel = budgetModule.model();
-  const BudgetService = budgetModule.service(BudgetModel);
-  router.post('/create', async (req, res, next) => {
-    try {
-      const newBudgetId = await BudgetService.create({
+
+  // console.log('budgetId_r', budgetId_r, budgetId_r.name)
+  
+  const { create_w, _r, [':budgetId_r']: budgetId_r } = src;
+  router[create_w.method](create_w.relativePath, create_w.middlewares, async (req, res, next) => {
+    try { 
+      const newBudgetId = await create_w.service({
         ...req.body,
         ownId: req.userId
       });
       res.status(201).json({ _id: newBudgetId });
     } catch(err) {
+      // _w.error(err, next);
       console.error({ Error: err });
     }
   });
   
-  router.get('/', async (req, res, next) => {
-    const newBudgetId = await BudgetService.find({});
+  router[_r.method](_r.relativePath, _r.middlewares, async (req, res, next) => {
+    const newBudgetId = await _r.service({});
     try {
       res.status(200).json(newBudgetId);
     } catch(err) {
     }
   });
-  router.get('/:budgetId', async (req, res, next) => {
+  router[budgetId_r.method](budgetId_r.relativePath, budgetId_r.middlewares, async (req, res, next) => {
     try {
       const { budgetId: budgetCode } = req.params;
-      const budget = await BudgetService.findByCode(budgetCode);
-      console.log('---------------', budgetCode)
-      console.log('---------------', budget)
+      const budget = await budgetId_r.service(budgetCode);
+      // console.log(budget)
       res.status(200).json({...budget});
     } catch(err) {
+      console.log(err)
       //next(budgetModule.budgetError().next(err));
     }
   });
-  router.get('/public/:budgetId', async (req, res, next) => {
-    try {
-      const { budgetId } = req.params;
-      const budget = await BudgetService.findByICode(budgetId);
-      res.status(200).json(budget);
-    } catch(err) {
-      //next(budgetModule.budgetError().next(err));
-    }
-  });
-  router.put('/', async (req, res, next) => {
-    try {
-      res.status(200).json({});
-    } catch(err) {
-    }
-  });
-  router.delete('/', async (req, res, next) => {
-    try {
-      res.status(200).json({});
-    } catch(err) {
-    }
-  });
-
-  app.use('/budget', router);
+  return router;
 }
