@@ -44,7 +44,7 @@ class ResourceManager {
     this.setServiceInRoute(route);
     this.setMiddlewareInRoute(route);
     this.generateApplicationResourceName(route);
-    debugger;
+    
     this.#resource[route.srcName] = route;
   }
 
