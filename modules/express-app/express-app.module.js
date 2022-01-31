@@ -11,6 +11,7 @@ class ExpressApp {
     this.#app.use(this.#express.json());
     this.#app.use(this.#express.urlencoded({ extended: false }));
     this.setMiddlewares();
+    this.activeCorsIfIsDev();
   }
 
   getApp() {
@@ -29,6 +30,12 @@ class ExpressApp {
   }
   getApplicationResources(name) {
     return this.#app.get('applicationResources')[name];
+  }
+  activeCorsIfIsDev() {
+    if(process.env.NODE_ENV === 'development') {
+      const cors = require('cors');
+      this.#app.use(cors());
+    }
   }
 
 
