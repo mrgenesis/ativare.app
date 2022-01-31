@@ -1,6 +1,6 @@
 'use strict';
 
-class ServiceFatory {
+class ServiceFactory {
   #data; #name; #nameType;
   constructor(exec, type, displayDescription) {
     this.#name = Object.getOwnPropertyDescriptor(exec, 'name').value
@@ -22,7 +22,10 @@ class ServiceFatory {
   get exec() {
     return this.#data.exec;
   }
+  get data() {
+    return this.#data
+  }
 
 }
 
-module.exports = ServiceFatory;
+module.exports = ServiceFactory;
