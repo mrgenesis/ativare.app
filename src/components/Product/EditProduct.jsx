@@ -33,12 +33,9 @@ export default function MaterialNew({ item, setItem }) {
       }
     });
   }
-  let txt = '';
-  item.materials.map((mat, i) => (
-    (i === 0)
-      ? txt = `(${mat.code}) ${mat.name} / Regra aplicada: ${ruleDisplayNames[mat.rule]}`
-      : txt += ', \n(' + mat.code + ') ' + mat.name + ' / Regra aplicada: ' + ruleDisplayNames[mat.rule]
-  ));
+  let txt = ''; 
+  item.materials.map((mat, i) => txt += `(${mat.code}) ${mat.name} / Limite: ${mat.charge}\n`);
+
   React.useEffect(() => {
     setMaterials(txt);
   }, [txt]);
