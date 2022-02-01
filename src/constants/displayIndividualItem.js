@@ -2,6 +2,8 @@ const displayIndividualItem = {
   material: {
     code: 'Código de identificação',
     name: 'Nome do Material',
+    limit: 'Limite do material',
+    ms: 'Ms do material',
     unitPrice: 'Preço unitário'
   },
   product: {
@@ -9,7 +11,8 @@ const displayIndividualItem = {
     name: 'Nome do produto',
     category: 'Categoria',
     group: 'Grupo',
-    description: 'Uma breve descrição'
+    description: 'Descrição do produto',
+    materialsTxt: 'Materiais'
   },
   user: {
     code: 'Código de identificação',
