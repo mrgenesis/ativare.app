@@ -11,15 +11,19 @@ export default function MaterialItem() {
   const [isLoaded, setIsLoaded] = React.useState(false);
   const [finished, setFinished] = React.useState(false);
   const [response, setResponse] = React.useState({});
-
+  
   React.useEffect(() => {
+    let materialsTxt = '';
     if (!isLoaded) {
       setIsLoaded(true);
       instance.get(`/product/${productId}`)
-        .then(res => {
-          setResponse(res.data);
-          setFinished(true);
+      .then(res => {
+        res.data.materials.map(material => {
+          return materialsTxt += `- (${material.code}) ${material.name}, Limite: ${material.charge} \n`;
         });
+        setResponse({ ...res.data, materialsTxt });
+        setFinished(true);
+      });
     }
   }, [isLoaded, productId]);
   return (
