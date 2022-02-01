@@ -15,7 +15,7 @@ export default function UserItem() {
   React.useEffect(() => {
     if (!isLoaded) {
       setIsLoaded(true);
-      instance.get(`/auth/${userCode}`)
+      instance.get(`/user/${userCode}`)
         .then(res => {
           setResponse(res.data);
           setFinished(true);

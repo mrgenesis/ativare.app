@@ -1,6 +1,6 @@
 export const apiRoutes = {
-  home: 'auth',
-  login: 'auth/authenticate'
+  home: 'user',
+  login: 'user/authenticate'
 }
 
 export const frontRoutes = {

@@ -40,12 +40,12 @@ const routesConfig = {
   user: {
     home: {
       displayName: 'Usuário',
-      api: '/auth',
+      api: '/user',
       front: '/usuario'
     },
     new: {
       displayName: 'Adicionar Novo',
-      api: '/auth/register',
+      api: '/user/register',
       front: '/usuario/novo'
     }
   }

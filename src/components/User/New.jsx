@@ -15,7 +15,7 @@ import UtilsMessageStatus from '../Utils/MessageStatus';
 
 export default function UserNew() {
   const [state, dispatch] = React.useContext(Context);
-  const saveUser = useGetApiData({ type: 'post', endPoint: '/auth/register', dispatch })
+  const saveUser = useGetApiData({ type: 'post', endPoint: '/user/register', dispatch })
 
   // Ferramente de validação
   const { register, handleSubmit, errors } = useForm();
