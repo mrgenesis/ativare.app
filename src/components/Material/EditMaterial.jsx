@@ -21,7 +21,7 @@ export default function MaterialNew({ item, setItem }) {
   const [name, setName] = React.useState(item['name']);
   const [unitPrice, setUnitPrice] = React.useState(item['unitPrice']);
   const [limit, setLimit] = React.useState(item['limit']);
-
+  const [ms, setMs] = React.useState(item['ms']);
   //possibles values: stopped, running, done
   const [runningApi, setRunningApi] = React.useState('stopped');
 
@@ -30,7 +30,7 @@ export default function MaterialNew({ item, setItem }) {
       getResponse: setItem,
       handleStatus: setRunningApi,
       params: {
-        name, limit, unitPrice: parseInt(unitPrice, 10), code: item['code']
+        name, limit, unitPrice: parseInt(unitPrice, 10), ms, code: item['code']
       }
     });
   }
@@ -56,6 +56,17 @@ export default function MaterialNew({ item, setItem }) {
             helperText={!!errors[materialModel.name.key] && 'Defina um nome'} />
 
           <TextField fullWidth disabled={(runningApi === 'running' || runningApi === 'done')}
+            id={materialModel.unitPrice.key}
+            name={materialModel.unitPrice.key}
+            label={materialModel.unitPrice.label}
+            type='number' margin='normal' value={unitPrice}
+            onChange={(event) => setUnitPrice(event.target.value)}
+            inputRef={register({ required: true })}
+            error={!!errors[materialModel.unitPrice.key]}
+            helperText={!!errors[materialModel.unitPrice.key] && 'Defina um preço.'}
+          />
+
+          <TextField fullWidth disabled={(runningApi === 'running' || runningApi === 'done')}
             id='limit'
             name='limit'
             label='Limite do Item/equipamento'
@@ -65,15 +76,16 @@ export default function MaterialNew({ item, setItem }) {
             error={!!errors.limit}
             helperText={!!errors.limit && 'Defina um preço.'}
           />
+
           <TextField fullWidth disabled={(runningApi === 'running' || runningApi === 'done')}
-            id={materialModel.unitPrice.key}
-            name={materialModel.unitPrice.key}
-            label={materialModel.unitPrice.label}
-            type='number' margin='normal' value={unitPrice}
-            onChange={(event) => setUnitPrice(event.target.value)}
+            id='ms'
+            name='ms'
+            label='ms do Item/equipamento'
+            type='number' margin='normal' value={ms}
+            onChange={(event) => setMs(event.target.value)}
             inputRef={register({ required: true })}
-            error={!!errors[materialModel.unitPrice.key]}
-            helperText={!!errors[materialModel.unitPrice.key] && 'Defina um preço.'}
+            error={!!errors.ms}
+            helperText={!!errors.ms && 'Defina um preço.'}
           />
 
           <Button disabled={(runningApi === 'running' || runningApi === 'done')} endIcon={<SaveOutlinedIcon />} type='submit' fullWidth>Salvar Alteração</Button>
