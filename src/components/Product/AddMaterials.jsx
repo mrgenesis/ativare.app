@@ -114,7 +114,7 @@ export default function CustomizedDialogs({ materialsList, addMaterial, addedMat
                       key={index}
                       value={value.code}
                       onClick={handleMaterial}>
-                      {value.name} - Limete: {value.limit}
+                      {value.name} - Limite: {value.limit}
                     </MenuItem>
                   ))}</Select>
               }
@@ -123,7 +123,7 @@ export default function CustomizedDialogs({ materialsList, addMaterial, addedMat
           </FormControl>
           <TextField fullWidth
             name='charge'
-            label='Qual é a carga deste item em relação ao material?'
+            label='Qual é a carga em relação ao limite do material?'
             type='number' margin='normal' value={charge}
             onChange={(event) => setCharge(Math.abs(event.target.value))}
             error={!!errors.charge}
