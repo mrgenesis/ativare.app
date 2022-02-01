@@ -33,7 +33,7 @@ module.exports = function materialController(src) {
   router.post(edit_u.relativePath, async (req, res) => {
     const materialUpdate = req.body;
     try {
-      const set = { '$set': { name: materialUpdate.name, limit: materialUpdate.limit, unitPrice: materialUpdate.unitPrice } }
+      const set = { '$set': { ...materialUpdate } }
       const material = await edit_u.service(materialUpdate.code, set);
       
       if (!material) {
