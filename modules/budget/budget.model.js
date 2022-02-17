@@ -12,6 +12,7 @@ module.exports = function budgetModel(context) {
     own: { type: Object },
     customer: { type: Object },
     productsList: { type: Array },
+    items: { type: Object },
     code: { type: String, unique: true },
     createAt: { type: Date, default: Date.now }
   });
