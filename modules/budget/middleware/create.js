@@ -7,8 +7,9 @@ class Budget {
   }
   generateItems() {
     this.productsList.forEach(item => {
-      console.log(item)
+      debugger;
       this.addPropertyIfHaveNot(this.items, item.floor, { [item.homeLocationName]: { config: item.configLocation, products: [] } });
+      this.addPropertyIfHaveNot(this.items[item.floor], item.homeLocationName, {  config: item.configLocation, products: [] });
       this.items[item.floor][item.homeLocationName].products.push(item);
     });
   }
