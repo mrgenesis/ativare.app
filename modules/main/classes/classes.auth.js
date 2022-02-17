@@ -8,8 +8,7 @@ class Auth {
     return this.#data.user;
   }
   generateToken({ param = {}, secret = process.env.JWT_SECRET } = {}) {
-    console.log('param',param)
-    return this.#jwt.sign(param.toJSON(), secret, { expiresIn: 86400 });
+    return this.#jwt.sign(param, secret, { expiresIn: 86400 });
   }
   verifyToken({ token, secret = process.env.JWT_SECRET, ...options } = {}) {
     return this.#jwt.verify(token, secret, options);
