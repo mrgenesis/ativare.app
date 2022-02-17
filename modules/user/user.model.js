@@ -26,7 +26,7 @@ module.exports = function userModel(context) {
     const userCounter = await Counter.findOneAndUpdate({ name: 'user' }, { $inc: { code: 1 }, codePrefix: 'U' }, { upsert: true, new: true });
     this.code = userCounter.codePrefix + userCounter.code;
     // this se refere ao objeto que está sendo gravado no banco
-    auth.hashPassword(this.password, 10).then(hash => {
+    return auth.hashPassword(this.password, 10).then(hash => {
       this.password = hash;
       next();
     });
