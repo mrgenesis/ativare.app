@@ -1,13 +1,16 @@
 import React from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { TextField, Button, Select, MenuItem, ButtonGroup, FormGroup, InputLabel, FormControl } from '@material-ui/core';
+import { useForm } from 'react-hook-form';
+import { TextField, Button, Select, MenuItem, ButtonGroup, FormGroup, FormControl, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import DoneIcon from '@material-ui/icons/Done';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Add from '@material-ui/icons/Add';
 import NotInterestedIcon from '@material-ui/icons/NotInterested';
 
 import Hidden from '../Utils/Hidden';
+import HomeLocationForm from './HomeLocationForm';
+import EnvironmentItems from './EnvironmentItems';
+import CustomSelect from './CustomSelect';
+
 
 import { Context } from '../../store/Store';
 
@@ -25,7 +28,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function AddItem({ addedProductsList, add }) {
   const classes = useStyles();
-  const firstUpper = (l) => (`${l.charAt(0).toUpperCase()}${l.slice(1)}`);
   const [, dispatch] = React.useContext(Context);
   const getData = useGetApiData({ type: 'get', endPoint: '/product/automation', dispatch });
   const [runningApi, setRunningApi] = React.useState('stopped');
@@ -34,7 +36,7 @@ export default function AddItem({ addedProductsList, add }) {
   const [selectedProductCode, setSelectedProductCode] = React.useState('');
   const [homeLocationName, setHomeLocationName] = React.useState('');
   const [amount, setAmount] = React.useState('');
-  const { handleSubmit, register, control, errors } = useForm();
+  const { handleSubmit, register, errors } = useForm();
 
   React.useEffect(() => {
     if (runningApi === 'stopped') {
@@ -48,8 +50,10 @@ export default function AddItem({ addedProductsList, add }) {
     }
     return productsList;
   }
-  function execAdd(data) {
+
+  function execAdd() {
     let product = productsList.find(prod => prod.code === selectedProductCode);
+    console.log('addedProductsList', addedProductsList)
     add([...addedProductsList, {
       productCode: product.code,
       _id: product._id,
@@ -61,6 +65,7 @@ export default function AddItem({ addedProductsList, add }) {
       [budgetModel.productsList.floorKey]: selectedFloor,
       [budgetModel.productsList.homeLocationName]: homeLocationName,
       [budgetModel.productsList.amount]: parseInt(amount, 10),
+      configLocation: { ...locations[`${selectedFloor} - ${homeLocationName}`] }
     }]);
   }
   function handleSelectedFloor(e) {
@@ -76,6 +81,21 @@ export default function AddItem({ addedProductsList, add }) {
     let { value } = event.currentTarget.dataset;
 
     setSelectedProductCode(value);
+  }
+  
+  const [locations, setLocations] = React.useState({});
+  function handleLocations(location) {
+    console.log(location)
+    setLocations( {...locations, ...location });
+  }
+
+  const handleDeleteLocation = name => {
+    const copyLocations = locations;    
+    delete copyLocations[name];
+    setLocations({ ...copyLocations });
+    // if (window.confirm('Isso vai remover os produtos adicionados neste ambiente. Deseja continuar?')) {
+    // }
+    // TODO: implementar isso depois.
   }
 
   return (
@@ -93,40 +113,38 @@ export default function AddItem({ addedProductsList, add }) {
         ))}
       </ButtonGroup>
       <Hidden status={(selectedFloor === 'off')}>
+          <HomeLocationForm addLocation={handleLocations} selectedFloor={selectedFloor} locations={locations} handleDeleteLocation={handleDeleteLocation} />
+          <EnvironmentItems locations={locations} handleDeleteLocation={handleDeleteLocation} />
         <form onSubmit={handleSubmit(execAdd)} className={classes.root}>
-          <FormControl error={!!errors.SelectProductCodeOfList} fullWidth>
-            <InputLabel id='SelectProductCodeOfList'>Escolha um produto *</InputLabel>
-            <Controller control={control}
-              defaultValue=''
-              rules={{ required: true }}
-              name='SelectProductCodeOfList'
-              as={
-                <Select
-                  fullWidth defaultValue="" type='hidden' labelId='SelectProductCodeOfList'>
-                  {
-                    (Array.isArray(getProductsList()))
-                      ? getProductsList().map((prod, index) => (
-                        <MenuItem key={index} value={prod.code} onClick={SelectProductCodeOfList}>{prod.name}</MenuItem>
-                      ))
-                      : <MenuItem>{getProductsList()}</MenuItem>
-                  }
-                </Select>
-              }
-            />
-          </FormControl>
+            <Typography color="textSecondary"  variant='body1'>
+              Adicione produtos aos ambientes
+            </Typography>
+          <div>
+      <FormControl fullWidth>
+        <Select displayEmpty value={selectedProductCode} onChange={SelectProductCodeOfList}>
+          <MenuItem disabled value="">
+            <em>Lista de produtos</em>
+          </MenuItem>
+          {
+            (Array.isArray(getProductsList()))
+              ? getProductsList().map(prod => 
+                  (
+                    <MenuItem key={prod.code} value={prod.code}>{prod.name}</MenuItem>
+                  ))
+              : <MenuItem>{getProductsList()}</MenuItem>
+          }
+        </Select>
+      </FormControl>
+    </div>
+                <CustomSelect 
+                  locations={locations} 
+                  selectedFloor={selectedFloor} 
+                  selectedLocation={homeLocationName} 
+                  setLocation={setHomeLocationName}
+                  placeholder={`Lista de ambientes no ${selectedFloor}`}
+                />
 
           <FormGroup row>
-            <TextField
-              fullWidth
-              name='homeLocationName'
-              inputRef={register({ required: true, minLength: 3 })}
-              error={!!errors.homeLocationName}
-              value={homeLocationName}
-              onChange={(e) => setHomeLocationName(firstUpper(e.currentTarget.value))}
-              label='Local da casa *'
-              placeholder='exemplo: Cozinha'
-              helperText={!!errors.homeLocationName && 'No mínimo 3 letras'}
-            />
             <TextField
               value={amount}
               name='amount'
@@ -136,7 +154,7 @@ export default function AddItem({ addedProductsList, add }) {
               error={!!errors.amount}
               helperText={!!errors.amount && 'Deve ser um número até 99'}
             />
-            <Button startIcon={<DoneIcon />} type='submit'><strong><u>Adicionar</u></strong></Button>
+            <Button type='submit' fullWidth><strong>Adicionar Produto</strong></Button>
           </FormGroup>
         </form>
       </Hidden>

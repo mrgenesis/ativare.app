@@ -3,7 +3,7 @@ import { Typography, Box, Button, Chip, Avatar, Divider } from '@material-ui/cor
 import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
 
 import Hidden from '../Utils/Hidden';
-import AddItem from './AddItem';
+import AddProduct from './AddProduct';
 
 export default function NovoOrcamento({ submit }) {
   const floors = [];
@@ -18,9 +18,15 @@ export default function NovoOrcamento({ submit }) {
     return '';
   })
 
+  const handleDelete = i => {
+    let copyAddedProductsList = [ ...addedProductsList ];
+    copyAddedProductsList.splice(i, 1);
+    setAddedProductsList([ ...copyAddedProductsList ]);
+  }
+  
   return (
     <>
-      <AddItem addedProductsList={addedProductsList} add={setAddedProductsList} />
+      <AddProduct addedProductsList={addedProductsList} add={setAddedProductsList} />
 
       <br />
       <form
@@ -32,10 +38,7 @@ export default function NovoOrcamento({ submit }) {
           }
           submit({ productsList: addedProductsList });
         }}>
-        <Box id='Box' mb={2} container={1} display='flex' flexDirection='column' justifyContent='center' alignItems="center">
 
-          <Button fullWidth endIcon={<SaveOutlinedIcon />} value='fim' type='submit'>Criar Orçamento</Button>
-        </Box>
 
         {(floors.length > 0)
           ? floors.map((floorName, index) => (
@@ -59,6 +62,7 @@ export default function NovoOrcamento({ submit }) {
                         variant="outlined"
                         size="small"
                         avatar={<Avatar>{addedProduct.amount}</Avatar>}
+                        onDelete={() => handleDelete(idx)}
                         label={addedProduct?.name + ' - ' + addedProduct?.homeLocationName} />
                     }
                   })}
@@ -67,12 +71,16 @@ export default function NovoOrcamento({ submit }) {
             </Fragment>
           ))
           : <>
-            <Typography variant='subtitle2'>Nenhum produto adicionado</Typography>
+            <Typography variant='caption' style={{color: 'red'}}>Nenhum produto adicionado</Typography>
             <Hidden status={hiddenMessageErrorSave}>
               <Typography color='error' variant='subtitle2'>Necessário adicionar pelo meno um produto</Typography>
             </Hidden>
           </>
         }
+                <Box id='Box' mb={2} container={1} display='flex' flexDirection='column' justifyContent='center' alignItems="center">
+
+<Button fullWidth endIcon={<SaveOutlinedIcon />} value='fim' variant='outlined' type='submit'>Criar Orçamento</Button>
+</Box>
       </form>
     </>
   );
