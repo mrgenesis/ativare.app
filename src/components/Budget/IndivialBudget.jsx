@@ -24,7 +24,7 @@ export default function IndivialBudget() {
   const [displayDetail, setDisplayDetail] = React.useState(false);
 
   const getData = useGetApiData({ type: 'get', endPoint: `/budget/${budgetId}`, dispatch });
-
+  
   React.useEffect(() => {
     if (runningApi === 'stopped') {
       getData({ params: {}, getResponse: setBudget, handleStatus: setRunningApi });
@@ -38,9 +38,9 @@ export default function IndivialBudget() {
           <BudgetPartsHeader createAt={budget.createAt} code={budget.code} customer={budget.customer} />
           <BudgetItems productsList={budget?.productsList} budgetFloors={budget.budgetFloors} />
           <BudgetTotal total={budget?.total} />
-          <Hidden status={(!budget.privateDetail)}>
+          <Hidden status={(!budget.privateDetails)}>
             {displayDetail
-              ? <BudgetPartsPrivateDetail hiddenFunc={setDisplayDetail} budgetFloors={budget.budgetFloors} materials={budget.privateDetail?.materials} />
+              ? <BudgetPartsPrivateDetail hiddenFunc={setDisplayDetail} privateDetails={budget.privateDetails} budgetFloors={budget.budgetFloors} materials={budget.privateDetail?.materials} />
               : <Button size='small' onClick={() => setDisplayDetail(true)}>Ver detalhes &nbsp;<VisibilityOutlinedIcon fontSize='small' /></Button>}
           </Hidden>
         </>
