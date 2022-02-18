@@ -4,7 +4,6 @@ import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
 import { useForm } from 'react-hook-form';
 
 import MessageStatus from '../Utils/MessageStatus';
-import { displayNames as ruleDisplayNames } from '../../constants/rules';
 
 import { useGetApiData } from '../../hooks/useGetApiData';
 import { productModel } from '../../config';
