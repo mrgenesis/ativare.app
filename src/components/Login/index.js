@@ -18,9 +18,9 @@ export default function Login() {
       setRunningApi('running');
       try {
         //let login = await instance.post('/auth/authenticate', data)
-        instance.post('/auth/authenticate', data)
+        instance.post('/user/authenticate', data)
           .then(response => {
-            if (response.status === 200) {
+            if (response.status === 201) {
               const { authorization, user } = response.data;
               dispatch({ type: 'LOGON', payload: { authorization, user } });
             }
