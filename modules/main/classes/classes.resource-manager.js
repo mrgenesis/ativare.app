@@ -41,27 +41,30 @@ class ResourceManager {
   }
   setResource(route) { 
     route.setModuleLowerCaseName(this.#module.lowerCaseName);
-    this.setServiceInRoute(route);
-    this.setMiddlewareInRoute(route);
+    route.setService(this.getService(route.serviceName));
+    route.middlewaresNamesList.forEach(middlewareName => {
+      route.setMiddleware(this.getMiddleware(middlewareName));
+    });
     this.generateApplicationResourceName(route);
     
     this.#resource[route.srcName] = route;
   }
 
-  setServiceInRoute(route = {}) {
-    route.setService(this.#services[route.serviceName]);
+  getService(serviceName) {
+    return this.#services[serviceName];
   }
-  setMiddlewareInRoute(route = {}) {
+  getMiddleware(middlewareName) {
     const GlobalMiddlewares = this.#context.Middleware;
-    return route.middlewaresNamesList.map(name => {
-      if (GlobalMiddlewares.getModuleMiddleware(name)) {
-        route.setMiddleware(GlobalMiddlewares.getModuleMiddleware(name));
-        return;
-      }
-      if (this.#middleware[name]) {
-        route.setMiddleware(this.#middleware[name]);
-      }
-    });    
+    let middleware = GlobalMiddlewares.getModuleMiddleware(middlewareName);
+    if (this.#context.Helper.types().isFunction(middleware)) {
+      return middleware;
+    }
+
+    middleware = this.#middleware[middlewareName];
+    if (this.#context.Helper.types().isNotFunction(middleware)) {
+      throw `Middleware "${middlewareName}" not found`;
+    }
+    return middleware;    
   }
   generateApplicationResourceName(route) {    
     const arn = `${route.name}_${route.serviceName}@${this.#module.name}_${route.type}`;
