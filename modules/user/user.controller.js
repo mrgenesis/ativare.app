@@ -1,10 +1,10 @@
 'use strict';
 
-module.exports = function userController(src) {
-  const { _r, register_w, authenticate_w, [':userCode_r']: userCode_r } = src;  
+module.exports = function userController(resources) {
   const router = require('express').Router();
+  const { _r, register_w, authenticate_w, [':userCode_r']: userCode_r } = resources;  
   
-  router[_r.method](_r.relativePath, async (req, res) => {
+  router[_r.method](_r.relativePath, async (req, res, next) => {
     try {
       const users = await _r.service();
       if (!users)
@@ -13,8 +13,7 @@ module.exports = function userController(src) {
       res.send([...users]);
   
     } catch (err) {
-      console.log(err);
-      res.status(400).send({ Error: "error" });
+      _r.error(next, err);
     }
   });
    
@@ -25,7 +24,7 @@ module.exports = function userController(src) {
       res.status(201).json(response);
 
     } catch (err) {
-      //err.isAppError ? next(err) : next(UserModule.userError(err));
+      register_w.error(next, err);
     }
   });
 
@@ -50,8 +49,7 @@ module.exports = function userController(src) {
       res.send({ ...user.toObject() });
   
     } catch (err) {
-      console.log(err);
-      res.status(400).send({ Error: "error" });
+      userCode_r.error(next, err);
     }
   });
 
