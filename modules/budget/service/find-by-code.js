@@ -9,8 +9,12 @@ function getContextToFindByCode(context) {
   async function findByCode(code, allowedItems) {
     const calc = new Calc(Models.budget.findOne({ code }), Models.material.find({}));
     return calc.promisesAll().then(values => {
-      calc.setResult(values);
-      return calc.getAllowedItems(allowedItems);
+      try {
+        calc.setResult(values);
+        return calc.getAllowedItems(allowedItems);
+      } catch (err) {
+        throw this.errorFormat(`Erro ao gerar o orçamento ${values[0].code} - ${err.message}`);
+      }
     });
 
   }  

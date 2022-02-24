@@ -42,10 +42,6 @@ class BudgetGenerator {
     });
     this.setMaterialsMerged();
   }
-  // setNewFloorIfHaveNot(floorName) {
-  //   const Floor = require('./floor-creator');
-  //   this.addPropertyIfHaveNot(this.details, floorName, new Floor);
-  // }
   addPropertyIfHaveNot(obj, property, initialValue) {
     if (obj.hasOwnProperty(property)) {
       return true;
@@ -99,17 +95,5 @@ class BudgetGenerator {
 
 
 }
-// const calc = new BudgetGenerator(Promise.resolve(require('./fixtures/budget')), Promise.resolve(require('./fixtures/materials')));
-
-// calc.promisesAll().then(values => {
-//   calc.setResult(values);
-//   console.log(JSON.stringify(calc, function(key, value) {
-//     if (key == 'budget' || key == 'products' || key == 'materials') {
-//       return key;
-//     }
-//     return value;
-//   }, '\t'));
-//   // console.log(calc);
-// });
 
 module.exports = BudgetGenerator;
