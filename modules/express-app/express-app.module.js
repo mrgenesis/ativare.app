@@ -37,6 +37,17 @@ class ExpressApp {
       this.#app.use(cors());
     }
   }
+  addErrorHandler() {
+    const subscriber = this.#context.Subscriber;
+    this.#app.use(function errorHandler(err, req, res, next) {
+      const send = data => ({ AppError: data });
+      subscriber.emit('app_error', err);
+      if (err.isAppError) {
+        return res.status(err.statusCode).json(send(err.response()));
+      }
+      res.status(500).json(send({ message: 'Error desconhecido. O log precisa ser analisado para saber mais detalhes.', errorId: err.errorId }));
+    });
+  }
 
 
 

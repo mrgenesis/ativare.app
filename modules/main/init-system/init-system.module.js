@@ -46,6 +46,7 @@ class InitSystem {
     await this.loadDatabase();
     this.loadModels();
     this.loadRoutes();
+    this.#AppModule.addErrorHandler();
 
   }
   loadModels() {
