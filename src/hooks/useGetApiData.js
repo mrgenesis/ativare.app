@@ -17,6 +17,9 @@ export function useGetApiData({ type = '', endPoint, dispatch = function () { } 
           dispatch({ type: 'STATUS_CODE_401', payload: { error: 'Login expirou. Necessário digitar senha novamente.' } });
         } else if (catchError.response?.status === 403) {
           dispatch({ type: 'STATUS_CODE_403', payload: { error: true, message: 'Acesso negado.' } });
+        } else if (catchError.response.data.AppError) {
+          const { AppError } = catchError.response.data;
+          dispatch({ type: 'AppError', payload: { error: true, message: `${AppError.message} Código do erro: "${AppError.errorId}".` } });
         } else {
           dispatch({ type: 'UNKNOWLEDGE', payload: { error: true, message: 'contate o suporte técnico.' } });
         }

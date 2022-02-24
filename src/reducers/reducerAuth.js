@@ -42,6 +42,12 @@ const reducerAuth = (state, action) => {
         error: true,
         message: action.payload.message
       }
+    case 'AppError':
+      return {
+        ...state,
+        error: action.payload.error,
+        message: action.payload.message
+      }
     case 'UNKNOWLEDGE':
       return {
         ...state,
