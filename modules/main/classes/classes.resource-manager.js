@@ -46,6 +46,8 @@ class ResourceManager {
       route.setMiddleware(this.getMiddleware(middlewareName));
     });
     this.generateApplicationResourceName(route);
+    route.setErrorFactory(this.#module.errorGenerator);
+    route.setErrorFormat(this.#module.errorFormat);
     
     this.#resource[route.srcName] = route;
   }

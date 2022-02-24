@@ -5,6 +5,9 @@ class RouterAux {
   constructor({ folderPath, context }) {
     this.#folderModule = folderPath;
 
+    this.errorFactory = context.AppError.errorModuleFactory;
+    this.errorFactory();
+
     const { ResourceManager } = context.Classes;
     const Manager = new ResourceManager({ module: this, folderPath, context });    
     this.setResource(Manager.getResourcesAll());

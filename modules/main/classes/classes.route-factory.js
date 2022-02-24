@@ -12,6 +12,20 @@ class RouteFatory {
     this.#middlewaresNamesList = middlewaresNamesList;
     this.#serviceName = this.setServiceName(serviceName);
   }
+  getDataAll() {
+    return {
+      name: this.#name,
+      method: this.#method,
+      moduleLowerCaseName: this.#moduleLowerCaseName,
+      serviceName: this.#serviceName,
+      middlewaresNamesList: this.#middlewaresNamesList,
+      middlewares: this.#middlewares,
+      data: this.#data,
+      arn: this.#arn,
+      types: this.#types,
+      error: this.error,
+    }
+  }
   get name() {
     return this.#name;
   }
@@ -57,6 +71,15 @@ class RouteFatory {
   }
   get data() {
     return this.#data;
+  }
+  setErrorFactory(generator) {
+    this.error = (next, err) => {
+      const e = generator(err.message, err.statusCode, this.arn);
+      return next(e);
+    }
+  }
+  setErrorFormat(creator) {
+    this.createError = creator;
   }
 
   setModuleLowerCaseName(moduleLowerCaseName) {
