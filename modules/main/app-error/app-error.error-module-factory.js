@@ -11,7 +11,7 @@ module.exports = function setErrorModule(errorModule) {
     Module.errorGenerator = function errorGenerator(message, statusCode, arn) {
       return new errorModule.appError({ name, message, statusCode, arn });
     }
-    Module.errorCreator = function errorCreator(message, statusCode) {
+    Module.errorFormat = function errorFormat(message, statusCode) {
       return { message, statusCode };
     }
   }
