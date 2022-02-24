@@ -1,11 +1,10 @@
 'use strict';
 
-module.exports = function productController(src) {
+module.exports = function productController(resources) {
   const router = require('express').Router();
+  const { _r, new_w, automation_r, edit_u, [':productId_r']: productId_r } = resources;
 
-  const { _r, new_w, automation_r, edit_u, [':productId_r']: productId_r } = src;
-  
-  router[_r.method](_r.relativePath, async (req, res) => {
+  router[_r.method](_r.relativePath, async (req, res, next) => {
     try {
       let product = await _r.service({});
       
@@ -13,11 +12,10 @@ module.exports = function productController(src) {
         ...product
       ]);
     } catch (error) {
-      console.log('error', error)
-      res.status(500).send('Erro para processar esta solicitação');
+      _r.error(next, error);
     }  
   });
-  router[new_w.method](new_w.relativePath, async (req, res) => {
+  router[new_w.method](new_w.relativePath, async (req, res, next) => {
     try {
       const product = await new_w.service(req.body);
       res.status(201).send({
@@ -25,11 +23,11 @@ module.exports = function productController(src) {
       });
       
     } catch (error) {
-      res.status(500).send('Erro para processar esta solicitação');
+      new_w.error(next, error);
     }
     
   });
-  router[automation_r.method](automation_r.relativePath, async (req, res) => {
+  router[automation_r.method](automation_r.relativePath, async (req, res, next) => {
     try {
       const automationItems = await automation_r.service({
         category: "Automação"
@@ -37,7 +35,7 @@ module.exports = function productController(src) {
       res.status(200).send([...automationItems]);
   
     } catch (error) {
-      res.status(500).send('Erro para processar esta solicitação');
+      new_w.error(next, error);
     }
   });
   
@@ -59,12 +57,11 @@ module.exports = function productController(src) {
       });
 
     } catch (err) {
-      console.error(err);
-      res.status(400).send({ Error: 'Não foi possível processar esta solicitação' })
+      edit_u.error(next, err);
     }
   });
   
-  router[productId_r.method]('/:productId', async (req, res) => {
+  router[productId_r.method](productId_r.relativePath, async (req, res, next) => {
     const { productId } = req.params;
     try {
       const product = await productId_r.service({ code: productId });
@@ -72,13 +69,10 @@ module.exports = function productController(src) {
         ...product.toObject()
       });
     } catch (error) {
-      console.log(error);
-      res.status(500).send({ error: 'Erro ao processar a solicitação' });
+      productId_r.error(next, error);
     }
   });
 
   return router;
 }
  
-
-
