@@ -3,26 +3,23 @@
 function setContextToAuthMiddleware(context) {
   const { Auth } = context.Classes;
 
-  function authVerify(req, res, next) {
+  function authVerify(req, _, next) {
     const authHeader = req.headers.authorization;
     req.userAuth = new Auth();
     
     if (!authHeader) {
-      req.userAuth.setLoginStatus();
       req.userAuth.setErrorMessage('No token provided.');
       return next();
     }
 
     const parts = authHeader.split(' ');
     if (!parts.length === 2) {
-      req.userAuth.setLoginStatus();
       req.userAuth.setErrorMessage('Token error.');
       return next();
     }
     
     const [ schema, token ] =  parts;
     if(!/^Bearer$/i.test(schema)) {
-      req.userAuth.setLoginStatus();
       req.userAuth.setErrorMessage('Malformatted token.');
       return next();
     }
