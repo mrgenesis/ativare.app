@@ -24,7 +24,8 @@ module.exports = function budgetController(resources) {
   router[budgetId_r.method](budgetId_r.relativePath, budgetId_r.middlewares, async (req, res, next) => {
     try {
       const { budgetId: budgetCode } = req.params;
-      const budget = await budgetId_r.service(budgetCode, budgetId_r.data.allowedItems);
+      const allowedItems = req.userAuth.getProperty('allowedItems');
+      const budget = await budgetId_r.service(budgetCode, allowedItems);
       res.status(200).json({...budget});
     } catch(err) {
       budgetId_r.error(next, err);

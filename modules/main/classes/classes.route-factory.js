@@ -4,7 +4,6 @@ class RouteFatory {
   #name; #method; #moduleLowerCaseName; #serviceName; #middlewaresNamesList;
   #service; #arn;
   #middlewares = [];
-  #data = {};
   #types = { post: 'w', get: 'r', put: 'u', delete: 'd' };
   constructor(name, method, middlewaresNamesList, serviceName) {
     this.#name = name; 
@@ -20,7 +19,6 @@ class RouteFatory {
       serviceName: this.#serviceName,
       middlewaresNamesList: this.#middlewaresNamesList,
       middlewares: this.#middlewares,
-      data: this.#data,
       arn: this.#arn,
       types: this.#types,
       error: this.error,
@@ -69,9 +67,6 @@ class RouteFatory {
   get arn() {
     return this.#arn;
   }
-  get data() {
-    return this.#data;
-  }
   setErrorFactory(generator) {
     this.error = (next, err) => {
       const e = generator(err.message, err.statusCode, this.arn);
@@ -103,9 +98,6 @@ class RouteFatory {
   }
   isArn(arn) {
     return arn === this.#arn;
-  }
-  addData({ propertyName, value }) {
-    this.#data[propertyName] = value;
   }
   isNotEqualType(serviceType) {
     if(serviceType !== this.type) {
