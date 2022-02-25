@@ -7,19 +7,19 @@ module.exports = function setContext(context) {
 
   async function auth(email, password) {
     const user = await context.model.user.findOne({ email }).select('+password');
+    let tokenUser = { group: user.group, code: user.code, _id: user._id };
+    let responseUser = { email: user.email, name: user.name };
 
     if (!user) {
-      return 'User not found/Password invalid.';
+      throw this.createError('User not found/Password invalid.', 403);
     }
     
     if (!await authc.compare(password, user.password)) {
-      return 'User not found/Password invalid.';
+      throw this.createError('User not found/Password invalid.', 403);
     }
     
-    delete user.password;
-
-    const authorization = await authc.generateToken({ param: { ...user }});
-    return { authorization, user: { email: user.email, name: user.name } }
+    const authorization = await authc.generateToken({ param: tokenUser });
+    return { authorization, user: responseUser };
   }
 
   return new ServiceFactory(auth, 'w', 'Permite entrar com login de senha para visualizar as informações restritas.');
