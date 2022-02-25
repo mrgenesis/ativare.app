@@ -4,6 +4,9 @@ class Auth {
   #bcrypt = require('bcryptjs');
   #jwt = require('jsonwebtoken');
   #data = {};
+  constructor() {
+    this.#data.loginStatus = false;
+  }
   get user() {
     return this.#data.user;
   }
@@ -31,10 +34,14 @@ class Auth {
   isLogin() {
     return this.#data.loginStatus;
   }
-  getData(decoded) {
-    console.log('getData running...', this.#data)
-    console.log('decoded...', decoded)
-    return this.#data;
+  getUserData() {
+    return this.#data.user;
+  }
+  addData({ propertyName, value }) {
+    this.#data[propertyName] = value;
+  }
+  getProperty(property) {
+    return this.#data[property];
   }
 }
 
