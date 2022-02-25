@@ -53,6 +53,9 @@ function types() {
     isNull(n) {
       return n === null;
     }
+    isFalse(v) {
+      return v === false;
+    }
     
   }
 
