@@ -25,16 +25,14 @@ class BudgetGenerator {
   }
   addConfigValuesInFloors() {
     this.keys.floors.forEach(floorName => {
-      
-
-
       this.details.setNewFloorIfHaveNot(floorName);
-
-      // this.setNewFloorIfHaveNot(floorName);
 
       this.keys.homeLocations[floorName].forEach(homeLocation => {
         const location = this.budget.items[floorName][homeLocation];
-        this.details[floorName].addConfigValuesInFloor(location.config);
+        this.details[floorName].addConfigAmountInFloor(location.config);
+        this.details[floorName].AddMsChargeInFloor(location.config);
+        this.details[floorName].AddPortChargeInFloor(location.config);
+        this.details[floorName].AddAmountPriceInFloor(location.config);
         
         this.joinEqualProducts(floorName, location);
       });
@@ -70,9 +68,6 @@ class BudgetGenerator {
     });
     this.details.setTotals()
     this.setProperties();
-  }
-  setAURAServer() {    
-    this.AURAServer = require('./fixed-materials')(1)['AURAServer'];
   }
   setProperties() {
     //['customer','own','productsList','budgetFloors','privateDetail']

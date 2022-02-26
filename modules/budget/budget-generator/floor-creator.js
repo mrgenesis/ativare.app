@@ -3,17 +3,17 @@
 class FloorCreator {
   #configsKeys;
   constructor() {
-    const fixedMaterials = require('./fixed-materials');
+    const fixedMaterials = require('./fixed-materials/fixed-materials');
 
     this.totalConfigs = {
-      I2CKeyPad: fixedMaterials(0)['I2CKeyPad'],
-      multiplexedKeyPad: fixedMaterials(0)['multiplexedKeyPad'],
-      point: fixedMaterials(0)['point'],
-      pulser: fixedMaterials(0)['pulser'],
+      I2CKeyPad: fixedMaterials.I2CKeyPad,
+      multiplexedKeyPad: fixedMaterials.multiplexedKeyPad,
+      point: fixedMaterials.point,
+      pulser: fixedMaterials.pulser,
     }
-    this.uDX201 = fixedMaterials(1)['uDX201'];
-    this.ex214 = fixedMaterials(0)['ex214'];
-    this.panel = fixedMaterials(1)['panel'];
+    this.uDX201 = fixedMaterials.uDX201;
+    this.ex214 = fixedMaterials.ex214;
+    this.panel = fixedMaterials.panel;
     this.products = {};
     this.materials = {};
     this.amountMs = 0;
@@ -21,38 +21,39 @@ class FloorCreator {
     this.amountPorts = 0;
     this.amountPrice = 0;
     this.#configsKeys = Object.keys(this.totalConfigs);
-
+  }
+  set addMs(ms) {
+    this.amountMs += parseInt(ms, 10);
+  }
+  set addPrice(price) {
+    this.amountPrice += parseInt(price, 10);
+  }
+  set addPoints(points) {
+    this.amountPoints += parseInt(points, 10);
+  }
+  set addPorts(ports) {
+    this.amountPorts += parseInt(ports, 10);
   }
   
-  addConfigValuesInFloor(locationConfig) { 
+  addConfigAmountInFloor(locationConfig) {
     this.#configsKeys.forEach(key => {
-      this.totalConfigs[key].amountAdd = locationConfig[key];
+      this.totalConfigs[key].addAmount = locationConfig[key];
     });
-    this.sumI2CMsInFloor(locationConfig['I2CKeyPad']);
-    this.sumMultiplexedKeyPadInFloor(locationConfig['multiplexedKeyPad']);
-    this.sumPointInFloor(locationConfig['point']);
-    this.sumPortInFloor(locationConfig['pulser']);
+  }
+  AddMsChargeInFloor(locationConfig) {
+    this.addMs = this.totalConfigs['I2CKeyPad'].ms * locationConfig['I2CKeyPad'];
+  }
+  AddPortChargeInFloor(locationConfig) {
+    this.addPorts = this.totalConfigs['multiplexedKeyPad'].ports * locationConfig['multiplexedKeyPad'];
+    this.addPorts = locationConfig['pulser'];
+  }
+  AddAmountPriceInFloor(locationConfig) {
+    this.addPrice = this.totalConfigs['I2CKeyPad'].unitPrice * locationConfig['I2CKeyPad'];
+    this.addPrice = this.totalConfigs['multiplexedKeyPad'].unitPrice * locationConfig['multiplexedKeyPad'];
+    this.addPrice = this.totalConfigs['point'].unitPrice * locationConfig['point'];
+    this.addPrice = this.totalConfigs['pulser'].unitPrice * locationConfig['pulser'];
   }
   
-  sumI2CMsInFloor(amount) {
-    const I2CKeyPad = this.totalConfigs['I2CKeyPad'];
-    this.amountMs += I2CKeyPad.ms * amount;
-    this.amountPrice += I2CKeyPad.unitPrice * amount;
-  }
-  sumMultiplexedKeyPadInFloor(amount) {
-    const multiplexedKeyPad = this.totalConfigs['multiplexedKeyPad'];
-    this.amountPorts += multiplexedKeyPad.ports * amount;
-    this.amountPrice += multiplexedKeyPad.unitPrice * amount;
-  }
-  sumPointInFloor(amount) {
-    const pulser = this.totalConfigs['pulser'];
-    const amountInt = parseInt(amount, 10);
-    this.amountPoints += amountInt;
-    this.amountPrice += pulser.unitPrice * amountInt;
-  }
-  sumPortInFloor(amount) {
-    this.amountPorts += parseInt(amount, 10);
-  }
   addEqualProduct(product) {
     if (this.addPropertyIfHaveNot(this.products, product.productCode, product)) {
       this.products[product.productCode].amount += product.amount;
@@ -70,14 +71,8 @@ class FloorCreator {
       this.materials[mergedMaterial.code].amountFloatAdd = mergedMaterial.amountFloat;
       this.materials[mergedMaterial.code].chargeAdd = mergedMaterial.amountCharge;
     }
-    this.sumPriceInFloor(mergedMaterial.amountPrice);
-    this.sumMsMaterial(mergedMaterial.amountMs);
-  }
-  sumPriceInFloor(price) {
-    this.amountPrice += price;
-  }
-  sumMsMaterial(amount) {
-    this.amountMs += amount;
+    this.addPrice = mergedMaterial.amountPrice;
+    this.addMs = mergedMaterial.amountMs;
   }
 }
 module.exports = FloorCreator;
