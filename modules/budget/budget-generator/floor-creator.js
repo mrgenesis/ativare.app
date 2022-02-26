@@ -23,7 +23,7 @@ class FloorCreator {
     this.#configsKeys = Object.keys(this.totalConfigs);
 
   }
-
+  
   addConfigValuesInFloor(locationConfig) { 
     this.#configsKeys.forEach(key => {
       this.totalConfigs[key].amountAdd = locationConfig[key];
@@ -46,11 +46,12 @@ class FloorCreator {
   }
   sumPointInFloor(amount) {
     const pulser = this.totalConfigs['pulser'];
-    this.amountPoints += amount;
-    this.amountPrice += pulser.unitPrice * amount;
+    const amountInt = parseInt(amount, 10);
+    this.amountPoints += amountInt;
+    this.amountPrice += pulser.unitPrice * amountInt;
   }
   sumPortInFloor(amount) {
-    this.amountPorts += amount;
+    this.amountPorts += parseInt(amount, 10);
   }
   addEqualProduct(product) {
     if (this.addPropertyIfHaveNot(this.products, product.productCode, product)) {
