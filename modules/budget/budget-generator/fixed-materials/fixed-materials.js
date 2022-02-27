@@ -10,12 +10,12 @@ const Point = require('./point');
 const Pulser = require('./pulser');
 
 module.exports = {
-  AURAServer: new AURAServer(),
-  panel: new Panel(),
-  uDX201: new uDX201(),
-  ex214: new Ex214(),
-  I2CKeyPad: new I2CKeyPad(),
-  multiplexedKeyPad: new multiplexedKeyPad(),
-  point: new Point(),
-  pulser: new Pulser(),
+  AURAServer: AURAServer,
+  panel: Panel,
+  uDX201: uDX201,
+  ex214: Ex214,
+  I2CKeyPad: I2CKeyPad,
+  multiplexedKeyPad: multiplexedKeyPad,
+  point: Point,
+  pulser: Pulser,
 };

@@ -32,7 +32,7 @@ class DetailsCreator {
   }
   setAURAServer() {    
     const fixedMaterials = require('./fixed-materials/fixed-materials');
-    this.AURAServer = fixedMaterials.AURAServer;
+    this.AURAServer = new fixedMaterials.AURAServer;
   }
   setUDX201(floorName) {
     this[floorName].uDX201.setAmount(this[floorName].amountMs);

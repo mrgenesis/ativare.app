@@ -6,14 +6,14 @@ class FloorCreator {
     const fixedMaterials = require('./fixed-materials/fixed-materials');
 
     this.totalConfigs = {
-      I2CKeyPad: fixedMaterials.I2CKeyPad,
-      multiplexedKeyPad: fixedMaterials.multiplexedKeyPad,
-      point: fixedMaterials.point,
-      pulser: fixedMaterials.pulser,
+      I2CKeyPad: new fixedMaterials.I2CKeyPad,
+      multiplexedKeyPad: new fixedMaterials.multiplexedKeyPad,
+      point: new fixedMaterials.point,
+      pulser: new fixedMaterials.pulser,
     }
-    this.uDX201 = fixedMaterials.uDX201;
-    this.ex214 = fixedMaterials.ex214;
-    this.panel = fixedMaterials.panel;
+    this.uDX201 = new fixedMaterials.uDX201;
+    this.ex214 = new fixedMaterials.ex214;
+    this.panel = new fixedMaterials.panel;
     this.products = {};
     this.materials = {};
     this.amountMs = 0;
