@@ -27,52 +27,112 @@ export default function PrivateDetail({ hiddenFunc, budgetFloors, privateDetails
           <Typography variant="overline" display="inline"><strong>{floorName} </strong></Typography>
             <Typography component='span' variant='caption' color="textSecondary" title='Total de ms no andar.'> - {details[floorName].amountMs}ms </Typography>
             <Typography component='span' variant='caption' color="textSecondary" title='Total de portas no andar.'> - {details[floorName].amountPorts} portas </Typography>
-          <div>
-          <Typography color="textSecondary" variant="caption">
-
-            <Typography component='span' variant='inherit' title='Cálculo da contidade por andar.'>
-            <strong>{details[floorName].uDX201.name}</strong> Qdade {details[floorName].uDX201.amount}, R${details[floorName].uDX201.unitPrice}/uni, subtotal R${details[floorName].uDX201.amountPrice}
-            <Divider component="li" />
-            </Typography>
-
-            <Typography component='span' variant='inherit' title='Cálculo da contidade por andar.'>
-            <strong>{details[floorName].ex214.name}</strong> Qdade {details[floorName].ex214.amount}, R${details[floorName].ex214.unitPrice}/uni, subtotal R${details[floorName].ex214.amountPrice}
-            <Divider component="li" />
-            </Typography>
-
-            <Typography component='span' variant='inherit' title='Cálculo da contidade por andar.'>
-            <strong>{details[floorName].totalConfigs.I2CKeyPad.name}</strong> Qdade {details[floorName].totalConfigs.I2CKeyPad.amount}, R${details[floorName].totalConfigs.I2CKeyPad.unitPrice}/uni, subtotal R${details[floorName].totalConfigs.I2CKeyPad.amountPrice}
-            <Divider component="li" />
-            </Typography>
-
-            <Typography component='span' variant='inherit' title='Cálculo da contidade por andar.'>
-            <strong>{details[floorName].totalConfigs.multiplexedKeyPad.name}</strong> Qdade {details[floorName].totalConfigs.multiplexedKeyPad.amount}, R${details[floorName].totalConfigs.multiplexedKeyPad.unitPrice}/uni, subtotal R${details[floorName].totalConfigs.multiplexedKeyPad.amountPrice}
-            <Divider component="li" />
-            </Typography>
-
-            <Typography component='span' variant='inherit' title='Cálculo da contidade por andar.'>
-            <strong>{details[floorName].totalConfigs.point.name}</strong> Qdade {details[floorName].totalConfigs.point.amount}, R${details[floorName].totalConfigs.point.unitPrice}/uni, subtotal R${details[floorName].totalConfigs.point.amountPrice}
-            <Divider component="li" />
-            </Typography>
-
-            <Typography component='span' variant='inherit' title='Cálculo da contidade por andar.'>
-            <strong>{details[floorName].totalConfigs.pulser.name}</strong> Qdade {details[floorName].totalConfigs.pulser.amount}, R${details[floorName].totalConfigs.pulser.unitPrice}/uni, subtotal R${details[floorName].totalConfigs.pulser.amountPrice}
-            <Divider component="li" />
-            </Typography>
             
-            <Typography component='span' variant='inherit' title='Cálculo da contidade por andar.'>
-            <strong>{details[floorName].panel.name}</strong> Qdade {details[floorName].panel.amount}, R${details[floorName].panel.unitPrice}/uni, subtotal R${details[floorName].panel.amountPrice}
-            <Divider component="li" />
-            </Typography>
+            
+            <Fragment>
+              <Box marginTop={1} marginBottom={1}>
+                <div>
+                  <Typography variant="body1" display="inline">{details[floorName].panel.name}</Typography>
+                </div>
+                <div>
+                  <Chip variant="outlined" size="small" label={`Qdade: ${details[floorName].panel.amount}`} />
+                  <Chip variant="outlined" size="small" label={`R$${details[floorName].panel.unitPrice}/un`} />
+                  <Chip variant="outlined" size="small" label={`Sub Total: R$${details[floorName].panel.amountPrice}`} />
+                </div>
+              </Box>
+              <Divider component="li" />
+            </Fragment>
 
-           </Typography>
-          </div>
+            <Fragment>
+              <Box marginTop={1} marginBottom={1}>
+                <div>
+                  <Typography variant="body1" display="inline">{details[floorName].uDX201.name}</Typography>
+                </div>
+                <div>
+                  <Chip variant="outlined" size="small" label={`Qdade: ${details[floorName].uDX201.amount}`} />
+                  <Chip variant="outlined" size="small" label={`R$${details[floorName].uDX201.unitPrice}/un`} />
+                  <Chip variant="outlined" size="small" label={`Sub Total: R$${details[floorName].uDX201.amountPrice}`} />
+                </div>
+              </Box> 
+              <Divider component="li" />
+            </Fragment>
+
+            <Fragment>
+              <Box marginTop={1} marginBottom={1}>
+                <div>
+                  <Typography variant="body1" display="inline">{details[floorName].ex214.name}</Typography>
+                </div>
+                <div>
+                  <Chip variant="outlined" size="small" label={`Qdade: ${details[floorName].ex214.amount}`} />
+                  <Chip variant="outlined" size="small" label={`R$${details[floorName].ex214.unitPrice}/un`} />
+                  <Chip variant="outlined" size="small" label={`Sub Total: R$${details[floorName].ex214.amountPrice}`} />
+                </div>
+              </Box> 
+              <Divider component="li" />
+            </Fragment>
+
+            <Fragment>
+              <Box marginTop={1} marginBottom={1}>
+                <div>
+                  <Typography variant="body1" display="inline">{details[floorName].totalConfigs.I2CKeyPad.name}</Typography>
+                </div>
+                <div>
+                  <Chip variant="outlined" size="small" label={`Qdade: ${details[floorName].totalConfigs.I2CKeyPad.amount}`} />
+                  <Chip variant="outlined" size="small" label={`R$${details[floorName].totalConfigs.I2CKeyPad.unitPrice}/un`} />
+                  <Chip variant="outlined" size="small" label={`Sub Total: R$${details[floorName].totalConfigs.I2CKeyPad.amountPrice}`} />
+                </div>
+              </Box> 
+              <Divider component="li" />
+            </Fragment>
+
+            <Fragment>
+              <Box marginTop={1} marginBottom={1}>
+                <div>
+                  <Typography variant="body1" display="inline">{details[floorName].totalConfigs.multiplexedKeyPad.name}</Typography>
+                </div>
+                <div>
+                  <Chip variant="outlined" size="small" label={`Qdade: ${details[floorName].totalConfigs.multiplexedKeyPad.amount}`} />
+                  <Chip variant="outlined" size="small" label={`R$${details[floorName].totalConfigs.multiplexedKeyPad.unitPrice}/un`} />
+                  <Chip variant="outlined" size="small" label={`Sub Total: R$${details[floorName].totalConfigs.multiplexedKeyPad.amountPrice}`} />
+                </div>
+              </Box> 
+              <Divider component="li" />
+            </Fragment>
+
+            <Fragment>
+              <Box marginTop={1} marginBottom={1}>
+                <div>
+                  <Typography variant="body1" display="inline">{details[floorName].totalConfigs.point.name}</Typography>
+                </div>
+                <div>
+                  <Chip variant="outlined" size="small" label={`Qdade: ${details[floorName].totalConfigs.point.amount}`} />
+                  <Chip variant="outlined" size="small" label={`R$${details[floorName].totalConfigs.point.unitPrice}/un`} />
+                  <Chip variant="outlined" size="small" label={`Sub Total: R$${details[floorName].totalConfigs.point.amountPrice}`} />
+                </div>
+              </Box>
+              <Divider component="li" />
+            </Fragment>
+
+            <Fragment>
+              <Box marginTop={1} marginBottom={1}>
+                <div>
+                  <Typography variant="body1" display="inline">{details[floorName].totalConfigs.pulser.name}</Typography>
+                </div>
+                <div>
+                  <Chip variant="outlined" size="small" label={`Qdade: ${details[floorName].totalConfigs.pulser.amount}`} />
+                  <Chip variant="outlined" size="small" label={`R$${details[floorName].totalConfigs.pulser.unitPrice}/un`} />
+                  <Chip variant="outlined" size="small" label={`Sub Total: R$${details[floorName].totalConfigs.pulser.amountPrice}`} />
+                </div>
+              </Box>
+              <Divider component="li" />
+            </Fragment>
+
             
           {materialCodesList.map(code => {
             return (
               
-              <Fragment key={floorName + code}>
-              <Box marginTop={1}>
+              <Fragment key={floorName + code + Math.random().toString(36)}>
+              <Box marginTop={1} marginBottom={1}>
                 <div>
                   <Typography variant="body1" display="inline">{materials[code].name}</Typography>
                 </div>
@@ -90,7 +150,6 @@ export default function PrivateDetail({ hiddenFunc, budgetFloors, privateDetails
                   </Typography>
                 </div>
               </Box>
-              <br />
               <Divider component="li" />
             </Fragment>
             )
