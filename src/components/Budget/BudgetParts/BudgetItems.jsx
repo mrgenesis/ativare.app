@@ -26,7 +26,7 @@ export default function BudgetItems({ productsList, budgetFloors }) {
                   <Typography component='span' color="textSecondary" variant='caption' display="inline">{returnValidData('I2CKeyPad')} {returnValidData('multiplexedKeyPad')} {returnValidData('point')} {returnValidData('pulser')}</Typography>
 
                   {productsList[floorName][locationName].products.map(product => 
-                    <Fragment key={product._id}>
+                    <Fragment key={floorName + locationName + product._id + Math.random().toString(36)}>
                       <Box marginTop={2} display='flex' flexDirection='row' justifyContent='space-between'>
                         <div>
                           <Typography gutterBottom variant="body1" display="inline">{product.name}</Typography>
