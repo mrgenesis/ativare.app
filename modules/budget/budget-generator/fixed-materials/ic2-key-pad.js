@@ -2,7 +2,7 @@
 
 class I2CKeyPad {
   constructor () {
-    this.name = 'Pulsador';
+    this.name = 'Key Pad IC2';
     this.unitPrice = 120;        
     this.amount = 0;
     this.amountPrice = 0;      
