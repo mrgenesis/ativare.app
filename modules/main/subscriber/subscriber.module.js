@@ -24,7 +24,7 @@ class Subscriber {
         unknowledge = AppError.unknowledge(err);
         err.errorId = unknowledge.errorId;
       }
-      this.#context.model.debug().create({ errorId: err.errorId, rawData: unknowledge || err });
+      this.#context.model.debug().create({ errorId: err.errorId, message: err.message, rawData: err });
     } catch (e) {
       console.log('Não não possível gravar o erro no banco de dados.', e);
     }
