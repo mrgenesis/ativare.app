@@ -45,7 +45,7 @@ class ExpressApp {
       if (err.isAppError) {
         return res.status(err.statusCode).json(send(err.response()));
       }
-      res.status(500).json(send({ message: 'Error desconhecido. O log precisa ser analisado para saber mais detalhes.', errorId: err.errorId }));
+      res.status(500).json(send({ message: `Erro desconhecido. O log precisa ser analisado para saber mais detalhes - ${err.message}`, errorId: err.errorId }));
     });
   }
 
