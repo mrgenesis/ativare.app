@@ -39,7 +39,6 @@ export default function PrivateDetail({ hiddenFunc, budgetFloors, privateDetails
         const Item = ({ item, haveCalc }) => (
           <Fragment>
             <Box marginTop={1} marginBottom={1}>
-            {console.log(item)}
               <div>
                 <Typography variant="body1" display="inline">{item.name}</Typography>
               </div>
