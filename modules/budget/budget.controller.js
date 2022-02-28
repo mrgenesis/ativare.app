@@ -6,7 +6,7 @@ module.exports = function budgetController(resources) {
 
   router[create_w.method](create_w.relativePath, create_w.middlewares, async (req, res, next) => {
     try { 
-      const newBudgetId = await create_w.service(create_w.data.budget);
+      const newBudgetId = await create_w.service(req.userAuth.getProperty('budget'));
       res.status(201).json({ _id: newBudgetId });
     } catch(err) {
       create_w.error(next, err);

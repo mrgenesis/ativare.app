@@ -36,7 +36,7 @@ function setContextToTtMiddleware(context) {
 
       budget.generateItems();
       const items = budget.getItems();
-      src.addData({ propertyName: 'budget', value: { items, own, customer }});
+      req.userAuth.addData({ propertyName: 'budget', value: { items, own, customer }});
       next();
     }
   }
