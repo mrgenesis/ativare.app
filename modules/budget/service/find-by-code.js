@@ -13,7 +13,7 @@ function getContextToFindByCode(context) {
         calc.setResult(values);
         return calc.getAllowedItems(allowedItems);
       } catch (err) {
-        throw this.errorFormat(`Erro ao gerar o orçamento ${values[0].code} - ${err.message}`);
+        throw this.createError(`Erro ao gerar o orçamento ${values[0].code} - ${err.message}`);
       }
     });
 
