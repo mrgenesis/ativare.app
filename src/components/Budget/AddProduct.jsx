@@ -53,20 +53,36 @@ export default function AddItem({ addedProductsList, add }) {
 
   function execAdd() {
     let product = productsList.find(prod => prod.code === selectedProductCode);
-    console.log('addedProductsList', addedProductsList)
-    add([...addedProductsList, {
-      productCode: product.code,
-      _id: product._id,
-      name: product.name,
-      description: product.description,
-      materials: product.materials,
-      category: product.category,
-      group: product.group,
-      [budgetModel.productsList.floorKey]: selectedFloor,
-      [budgetModel.productsList.homeLocationName]: homeLocationName,
-      [budgetModel.productsList.amount]: parseInt(amount, 10),
-      configLocation: { ...locations[`${selectedFloor} - ${homeLocationName}`] }
-    }]);
+    const copyAddedProductsList = addedProductsList;
+    let statusAdd = true;
+    addedProductsList.forEach((item, i) => {
+      const theSameFloor = (item.floor === selectedFloor);
+      const theSameProductCode = (item.productCode === product.code);
+      const theSameHomeLocation = (item.homeLocationName === homeLocationName);
+      const messageConfirm = `Você já adicionou ${item.amount} "${product.name}" em "${selectedFloor} - ${homeLocationName}". Se clicar em "Ok" o produto será substituído. Tem certeza que quer continuar?`;
+      if (theSameFloor && theSameProductCode && theSameHomeLocation) {
+        if (window.confirm(messageConfirm)) {
+          copyAddedProductsList.splice(i, 1);
+          return;
+        }
+        statusAdd = false;
+      }
+    });
+    if (statusAdd) {
+      add([...copyAddedProductsList, {
+        productCode: product.code,
+        _id: product._id,
+        name: product.name,
+        description: product.description,
+        materials: product.materials,
+        category: product.category,
+        group: product.group,
+        [budgetModel.productsList.floorKey]: selectedFloor,
+        [budgetModel.productsList.homeLocationName]: homeLocationName,
+        [budgetModel.productsList.amount]: parseInt(amount, 10),
+        configLocation: { ...locations[`${selectedFloor} - ${homeLocationName}`] }
+      }])
+    }
   }
   function handleSelectedFloor(e) {
     setHomeLocationName('');
