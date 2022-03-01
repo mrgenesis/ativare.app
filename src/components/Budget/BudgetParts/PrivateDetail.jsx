@@ -7,12 +7,18 @@ import Box from '@material-ui/core/Box';
 import VisibilityOffOutlinedIcon from '@material-ui/icons/VisibilityOffOutlined';
 
 // Componente exibe a lista dos item do orçamento
-export default function PrivateDetail({ hiddenFunc, budgetFloors, privateDetails: { AURAServer, materials, adicionalsCalc, ...details } }) {
+export default function PrivateDetail({ own, hiddenFunc, budgetFloors, privateDetails: { AURAServer, materials, adicionalsCalc, ...details } }) {
   return (
     <>
       <Box marginTop={5}>
         <Button onClick={() => hiddenFunc(false)} display="inline"><VisibilityOffOutlinedIcon fontSize='small' /></Button>
       </Box>
+      <div>
+        <Typography color="textSecondary" variant="caption">
+          <Typography component='span' variant='inherit' title='Um por orçamento'>Responsável:  {own.name} - Comissão R${details.percentValue}. </Typography>
+        </Typography>
+        <Divider component="li" />
+      </div>
       <div>
         <Typography color="textSecondary" variant="caption">
           <Typography component='span' variant='inherit' title='Um por orçamento'>{AURAServer.name}: R${AURAServer.unitPrice}. </Typography>

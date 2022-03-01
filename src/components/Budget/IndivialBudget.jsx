@@ -40,7 +40,7 @@ export default function IndivialBudget() {
           <BudgetTotal total={budget?.total} />
           <Hidden status={(!budget.privateDetails)}>
             {displayDetail
-              ? <BudgetPartsPrivateDetail hiddenFunc={setDisplayDetail} privateDetails={budget.privateDetails} budgetFloors={budget.budgetFloors} materials={budget.privateDetail?.materials} />
+              ? <BudgetPartsPrivateDetail hiddenFunc={setDisplayDetail} own={budget.own} privateDetails={budget.privateDetails} budgetFloors={budget.budgetFloors} materials={budget.privateDetail?.materials} />
               : <Button size='small' onClick={() => setDisplayDetail(true)}>Ver detalhes &nbsp;<VisibilityOutlinedIcon fontSize='small' /></Button>}
           </Hidden>
         </>

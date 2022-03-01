@@ -14,7 +14,7 @@ export default function New() {
   const [runningApi, setRunningApi] = React.useState('stopped');
   const [response, setResponse] = React.useState('');
   const [dataLink, setDataLink] = React.useState(null);
-  const [collectedData, setCollectedData] = React.useState({})
+  const [collectedData, setCollectedData] = React.useState({ own: JSON.parse(localStorage.getItem('user')) })
     , [stage, setStage] = React.useState(0)
     , next = () => setStage(stage + 1)
     , componentes = [

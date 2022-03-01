@@ -8,6 +8,7 @@ export default function ClienteCadastro({ submit }) {
   const [name, setName] = React.useState('');
   const [phone, setPhone] = React.useState('');
   const [email, setEmail] = React.useState('');
+  const [percent, setPercent] = React.useState(10);
   const helperFields = {
     phone: {
       "required": "O campo telefone é obrigatório",
@@ -20,12 +21,15 @@ export default function ClienteCadastro({ submit }) {
     },
     email: {
       "pattern": "Deve ser um email válido",
+    },
+    percent: {
+      "min": "O valor mínimo é 0%."
     }
   }
 
   const { register, handleSubmit, errors } = useForm();
   const onSubmit = () => {
-    submit({ customer: { phone, name, email } });
+    submit({ customer: { phone, name, email, percent: (percent / 100) } });
   }
 
   return (
@@ -66,6 +70,15 @@ export default function ClienteCadastro({ submit }) {
             helperText={!!errors.email && helperFields.email[errors.email?.type]}
             type='text' margin='normal' value={email}
             onChange={(event) => setEmail(event.target.value)}
+          />
+          <TextField fullWidth
+            name='percent'
+            id='percent' label='Pecentual de comissão'
+            error={!!errors.percent}
+            inputRef={register({ min: 0 })}
+            helperText={!!errors.percent && helperFields.percent[errors.percent?.type]}
+            type='number' margin='normal' value={percent}
+            onChange={(event) => setPercent(event.target.value)}
           />
 
 
