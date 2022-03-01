@@ -5,7 +5,8 @@ function setContextToTtMiddleware(context) {
     
     return function findByCode(req, res, next) {
       console.log('Middleware findByCode running.....')
-      req.userAuth.addData({ propertyName: 'allowedItems', value: ['customer','own','productsList', 'total', 'budgetFloors','privateDetails'] });
+      // TODO: Este middleware deve definir as propriedades permitidas para o usuário visualizar
+      req.userAuth.addData({ propertyName: 'allowedItems', value: ['basicBudgetView', 'privateDetails'] });
       next();
     }
   }

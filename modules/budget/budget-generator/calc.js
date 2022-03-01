@@ -66,29 +66,35 @@ class BudgetGenerator {
         });
       });
     });
-    this.details.setTotals()
-    this.setProperties();
+    this.details.setTotals();
+    this.details.addPercent(this.budget.customer.percent);
   }
-  setProperties() {
-    //['customer','own','productsList','budgetFloors','privateDetail']
-    this.code = this.budget.code;
-    this.customer = { name: 'Jon Doe', email: 'jon.doe@dev.com', phone: '11955557799' }
-    this.own = { name: 'Jon Doe' };
-    this.productsList = this.budget.items;
-    this.budgetFloors = this.keys.floors;
-    this.createAt = this.budget.createAt;
-    this.privateDetails = this.details;
-    this.total = this.details.getTotal();
+  getBasicBudgetProperties() {
+    const budget = {};
+    budget.customer = this.budget.customer;
+    budget.code = this.budget.code;
+    budget.createAt = this.budget.createAt;
+    budget.productsList = this.budget.items;
+    budget.total = this.details.getTotal();
+    budget.budgetFloors = this.keys.floors;
+    budget.own = this.budget.own;
+    return budget;
   }
   getAllowedItems(propertiesList) {
-    const result = {}; console.log('propertiesList', propertiesList)
+    const responseView = {
+      basicBudgetView: this.getBasicBudgetProperties(),
+      privateDetails: this.details
+    };
+    let resultResponse = {};
+    
     propertiesList.forEach(property => {
-      result[property] = this[property];
+      if (property === 'basicBudgetView') {        
+        return resultResponse = { ...responseView[property] };
+      }
+      resultResponse[property] = responseView[property];
     });
-    return result;
+    return resultResponse;
   }
-
-
 }
 
 module.exports = BudgetGenerator;

@@ -6,7 +6,7 @@ class DetailsCreator {
   #floors = [];
   
   set addTotal(x) {
-    this.#total += x;
+    this.#total += parseInt(x, 10);
   }
   setNewFloorIfHaveNot(floorName) {
     const Floor = require('./floor-creator');
@@ -46,6 +46,9 @@ class DetailsCreator {
   getTotal() {
     return this.#total;
   }
-  
+  addPercent(v) {
+    this.percentValue = this.#total * parseFloat(v);
+    this.addTotal = this.percentValue;
+  }
 }
 module.exports = DetailsCreator;
