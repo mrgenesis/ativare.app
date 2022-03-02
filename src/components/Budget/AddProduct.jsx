@@ -101,17 +101,26 @@ export default function AddItem({ addedProductsList, add }) {
   
   const [locations, setLocations] = React.useState({});
   function handleLocations(location) {
-    console.log(location)
     setLocations( {...locations, ...location });
   }
 
   const handleDeleteLocation = name => {
-    const copyLocations = locations;    
-    delete copyLocations[name];
-    setLocations({ ...copyLocations });
-    // if (window.confirm('Isso vai remover os produtos adicionados neste ambiente. Deseja continuar?')) {
-    // }
-    // TODO: implementar isso depois.
+    
+    if (window.confirm('Isso vai remover todos os produtos adicionados neste ambiente. Deseja continuar?')) {
+      const copyLocations = locations;    
+      delete copyLocations[name];
+      setLocations({ ...copyLocations });
+
+      let idx = [];
+      addedProductsList.forEach((product, i) => {
+        if (`${product.floor} - ${product.homeLocationName}` === name) {
+          idx.push(i);
+        }
+      });
+      const removed = addedProductsList.filter((_, i) => idx.indexOf(i) === -1);
+      add([ ...removed ]);
+    }
+
   }
 
   return (
@@ -129,37 +138,35 @@ export default function AddItem({ addedProductsList, add }) {
         ))}
       </ButtonGroup>
       <Hidden status={(selectedFloor === 'off')}>
-          <HomeLocationForm addLocation={handleLocations} selectedFloor={selectedFloor} locations={locations} handleDeleteLocation={handleDeleteLocation} />
-          <EnvironmentItems locations={locations} handleDeleteLocation={handleDeleteLocation} />
+        <HomeLocationForm addLocation={handleLocations} selectedFloor={selectedFloor} locations={locations} handleDeleteLocation={handleDeleteLocation} />
+        <EnvironmentItems locations={locations} handleDeleteLocation={handleDeleteLocation} />
         <form onSubmit={handleSubmit(execAdd)} className={classes.root}>
             <Typography color="textSecondary"  variant='body1'>
               Adicione produtos aos ambientes
             </Typography>
           <div>
-      <FormControl fullWidth>
-        <Select displayEmpty value={selectedProductCode} onChange={SelectProductCodeOfList}>
-          <MenuItem disabled value="">
-            <em>Lista de produtos</em>
-          </MenuItem>
-          {
-            (Array.isArray(getProductsList()))
-              ? getProductsList().map(prod => 
-                  (
-                    <MenuItem key={prod.code} value={prod.code}>{prod.name}</MenuItem>
-                  ))
-              : <MenuItem>{getProductsList()}</MenuItem>
-          }
-        </Select>
-      </FormControl>
-    </div>
-                <CustomSelect 
-                  locations={locations} 
-                  selectedFloor={selectedFloor} 
-                  selectedLocation={homeLocationName} 
-                  setLocation={setHomeLocationName}
-                  placeholder={`Lista de ambientes no ${selectedFloor}`}
-                />
+            <FormControl fullWidth>
+              <Select displayEmpty value={selectedProductCode} onChange={SelectProductCodeOfList}>
+                <MenuItem disabled value="">
+                  <em>Lista de produtos</em>
+                </MenuItem>
+                {
+                  (Array.isArray(getProductsList()))
+                    ? getProductsList().map(prod => <MenuItem key={prod.code} value={prod.code}>{prod.name}</MenuItem>)
+                    : <MenuItem>{getProductsList()}</MenuItem>
+                }
+              </Select>
+            </FormControl>
+          </div>
 
+          <CustomSelect 
+            locations={locations} 
+            selectedFloor={selectedFloor} 
+            selectedLocation={homeLocationName} 
+            setLocation={setHomeLocationName}
+            placeholder={`Lista de ambientes no ${selectedFloor}`}
+          />
+          
           <FormGroup row>
             <TextField
               value={amount}

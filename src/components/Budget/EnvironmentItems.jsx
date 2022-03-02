@@ -3,7 +3,6 @@ import { Typography, Chip, Divider } from '@material-ui/core';
 
 
 export default function EnvironmentItems({ locations, handleDeleteLocation }) {
-  console.log('locations', locations)
   const locationsList = Object.keys(locations);
   return (
     <div>
