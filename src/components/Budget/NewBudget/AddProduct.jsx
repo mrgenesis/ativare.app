@@ -1,6 +1,6 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { TextField, Button, Select, MenuItem, ButtonGroup, FormGroup, FormControl, Typography } from '@material-ui/core';
+import { TextField, Button, ButtonGroup, FormGroup, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Add from '@material-ui/icons/Add';
@@ -9,7 +9,8 @@ import NotInterestedIcon from '@material-ui/icons/NotInterested';
 import Hidden from '../../Utils/Hidden';
 import HomeLocationForm from './HomeLocationForm';
 import EnvironmentItems from './EnvironmentItems';
-import CustomSelect from './CustomSelect';
+import ProductSelect from './ProductSelect';
+import LocationSelect from './LocationSelect';
 
 
 import { Context } from '../../../store/Store';
@@ -81,10 +82,15 @@ export default function AddItem({ addedProductsList, add }) {
         [budgetModel.productsList.homeLocationName]: homeLocationName,
         [budgetModel.productsList.amount]: parseInt(amount, 10),
         configLocation: { ...locations[`${selectedFloor} - ${homeLocationName}`] }
-      }])
+      }]);
+      setSelectedProductCode('');
+      setHomeLocationName('');
+      setAmount('');
+      
     }
   }
   function handleSelectedFloor(e) {
+    setSelectedProductCode('');
     setHomeLocationName('');
     setAmount('');
     if (selectedFloor === e.currentTarget.value) {
@@ -92,11 +98,6 @@ export default function AddItem({ addedProductsList, add }) {
       return;
     }
     setSelectedFloor(e.currentTarget.value);
-  }
-  function SelectProductCodeOfList(event) {
-    let { value } = event.currentTarget.dataset;
-
-    setSelectedProductCode(value);
   }
   
   const [locations, setLocations] = React.useState({});
@@ -141,30 +142,23 @@ export default function AddItem({ addedProductsList, add }) {
         <HomeLocationForm addLocation={handleLocations} selectedFloor={selectedFloor} locations={locations} handleDeleteLocation={handleDeleteLocation} />
         <EnvironmentItems locations={locations} handleDeleteLocation={handleDeleteLocation} />
         <form onSubmit={handleSubmit(execAdd)} className={classes.root}>
-            <Typography color="textSecondary"  variant='body1'>
-              Adicione produtos aos ambientes
-            </Typography>
-          <div>
-            <FormControl fullWidth>
-              <Select displayEmpty value={selectedProductCode} onChange={SelectProductCodeOfList}>
-                <MenuItem disabled value="">
-                  <em>Lista de produtos</em>
-                </MenuItem>
-                {
-                  (Array.isArray(getProductsList()))
-                    ? getProductsList().map(prod => <MenuItem key={prod.code} value={prod.code}>{prod.name}</MenuItem>)
-                    : <MenuItem>{getProductsList()}</MenuItem>
-                }
-              </Select>
-            </FormControl>
-          </div>
+          <Typography color="textSecondary"  variant='body1'>
+            Adicione produtos aos ambientes
+          </Typography>
+            
+          <ProductSelect 
+            list={getProductsList()} 
+            selectedValue={selectedProductCode} 
+            placeholder='Lista de produtos' 
+            setSelectedValue={setSelectedProductCode} 
+          />
 
-          <CustomSelect 
+          <LocationSelect 
             locations={locations} 
             selectedFloor={selectedFloor} 
-            selectedLocation={homeLocationName} 
-            setLocation={setHomeLocationName}
-            placeholder={`Lista de ambientes no ${selectedFloor}`}
+            selectedValue={homeLocationName} 
+            placeholder={`Lista de ambientes no ${selectedFloor}`} 
+            setSelectedValue={setHomeLocationName} 
           />
           
           <FormGroup row>
