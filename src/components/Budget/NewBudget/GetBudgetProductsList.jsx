@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import { Typography, Box, Button, Chip, Avatar, Divider } from '@material-ui/core';
 import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
 
-import Hidden from '../Utils/Hidden';
+import Hidden from '../../Utils/Hidden';
 import AddProduct from './AddProduct';
 
 export default function NovoOrcamento({ submit }) {

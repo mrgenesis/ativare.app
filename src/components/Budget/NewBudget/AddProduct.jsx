@@ -6,16 +6,16 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Add from '@material-ui/icons/Add';
 import NotInterestedIcon from '@material-ui/icons/NotInterested';
 
-import Hidden from '../Utils/Hidden';
+import Hidden from '../../Utils/Hidden';
 import HomeLocationForm from './HomeLocationForm';
 import EnvironmentItems from './EnvironmentItems';
 import CustomSelect from './CustomSelect';
 
 
-import { Context } from '../../store/Store';
+import { Context } from '../../../store/Store';
 
-import { useGetApiData } from '../../hooks/useGetApiData';
-import { budgetModel } from '../../config';
+import { useGetApiData } from '../../../hooks/useGetApiData';
+import { budgetModel } from '../../../config';
 
 const useStyles = makeStyles((theme) => ({
   root: {

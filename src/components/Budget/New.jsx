@@ -1,12 +1,12 @@
 import React from "react";
 
-import GetBudgetProductsList from './GetBudgetProductsList';
+import GetBudgetProductsList from './NewBudget/GetBudgetProductsList';
 import MessageStatus from '../Utils/MessageStatus';
 
 import { useGetApiData } from '../../hooks/useGetApiData';
 import { Context } from '../../store/Store';
 
-import GetCustomerData from '../Customer/GetCustomerData';
+import GetCustomerData from './NewBudget/GetCustomerData';
 
 export default function New() {
   const [state, dispatch] = React.useContext(Context);

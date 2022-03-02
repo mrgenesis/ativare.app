@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography, TextField, Button, Box, Divider } from '@material-ui/core';
 import Add from '@material-ui/icons/Add';
-import Hidden from '../Utils/Hidden';
+import Hidden from '../../Utils/Hidden';
 import NotInterestedIcon from '@material-ui/icons/NotInterested';
 
 
