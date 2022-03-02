@@ -1,8 +1,8 @@
 import React from "react";
-import { Select, FormControl, MenuItem } from "@material-ui/core/";
+import { Select, FormControl, MenuItem, FormHelperText } from "@material-ui/core/";
 import createUUID from "../../helper/uuid";
 
-const CustomSelect = ({ selectedValue, placeholder, setSelectedValue, list, propertyValueInMap, propertyDisplayInMap }) => {
+const CustomSelect = ({ selectedValue, placeholder, setSelectedValue, list, propertyValueInMap, propertyDisplayInMap, error, errorMessage }) => {
 
   const handleChange = e => {
     setSelectedValue(e.target.value);
@@ -11,7 +11,12 @@ const CustomSelect = ({ selectedValue, placeholder, setSelectedValue, list, prop
   return (
     <div>
       <FormControl fullWidth>
-        <Select displayEmpty value={selectedValue} onChange={handleChange}>
+        <Select 
+          displayEmpty 
+          value={selectedValue} 
+          onChange={handleChange} 
+          error={error}
+        >
           <MenuItem disabled value="">
             <em>{placeholder}</em>
           </MenuItem>
@@ -23,6 +28,7 @@ const CustomSelect = ({ selectedValue, placeholder, setSelectedValue, list, prop
             ))
           }
         </Select>
+        {error ? <FormHelperText error={error}>{errorMessage}</FormHelperText> : ''}
       </FormControl>
     </div>
   );
