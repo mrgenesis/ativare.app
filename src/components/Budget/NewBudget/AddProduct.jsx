@@ -38,6 +38,8 @@ export default function AddItem({ addedProductsList, add }) {
   const [homeLocationName, setHomeLocationName] = React.useState('');
   const [amount, setAmount] = React.useState('');
   const { handleSubmit, register, errors } = useForm();
+  const [statusErrorProductSelect, setStatusErrorProductSelect] = React.useState(false);
+  const [statusErrorLocationSelect, setStatusErrorLocationSelect] = React.useState(false);
 
   React.useEffect(() => {
     if (runningApi === 'stopped') {
@@ -51,8 +53,12 @@ export default function AddItem({ addedProductsList, add }) {
     }
     return productsList;
   }
-
-  function execAdd() {
+  function execAdd() {    
+    (selectedProductCode === '') ? setStatusErrorProductSelect(true) : setStatusErrorProductSelect(false);
+    (homeLocationName === '') ? setStatusErrorLocationSelect(true) : setStatusErrorLocationSelect(false);
+    if((selectedProductCode === '') || (homeLocationName === '')) {
+      return;
+    }
     let product = productsList.find(prod => prod.code === selectedProductCode);
     const copyAddedProductsList = addedProductsList;
     let statusAdd = true;
@@ -151,6 +157,8 @@ export default function AddItem({ addedProductsList, add }) {
             selectedValue={selectedProductCode} 
             placeholder='Lista de produtos' 
             setSelectedValue={setSelectedProductCode} 
+            error={statusErrorProductSelect}
+            errorMessage='Selecione um produto para adicionar.'
           />
 
           <LocationSelect 
@@ -159,6 +167,8 @@ export default function AddItem({ addedProductsList, add }) {
             selectedValue={homeLocationName} 
             placeholder={`Lista de ambientes no ${selectedFloor}`} 
             setSelectedValue={setHomeLocationName} 
+            error={statusErrorLocationSelect}
+            errorMessage='Selecione um ambiente antes de adicionar produtos à lista'
           />
           
           <FormGroup row>
