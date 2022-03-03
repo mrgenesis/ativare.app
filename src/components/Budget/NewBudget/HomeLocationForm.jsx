@@ -5,7 +5,7 @@ import Hidden from '../../Utils/Hidden';
 import NotInterestedIcon from '@material-ui/icons/NotInterested';
 
 
-export default function HomeLocationForm({ addLocation, selectedFloor }) {
+export default function HomeLocationForm({ addLocation, selectedFloor, locations }) {
   const [addLocationStatusButton, setAddLocationStatusButton] = React.useState(true);
   const addLocationMessageButton = (addLocationStatusButton) ? 'Ocultar formulário' : 'Exibir formulário';
   
@@ -26,24 +26,47 @@ export default function HomeLocationForm({ addLocation, selectedFloor }) {
 
   const [pulser, setPulser] = React.useState('');
   const handlePulser = (e) => setPulser(e.target.value);
-
+  
+  const [homeLocationError, setHomeLocationError] = React.useState(false);
+  const [homeLocationErrorMessage, setHomeLocationErrorMessage] = React.useState('');
+  React.useEffect(() => ((homeLocation !== '') ? setHomeLocationError(false) : ''), [homeLocation]);
   const changeEmptyToZero = x => (x === '') ? 0 : x;
   const handleAdd = () => { 
+    if (homeLocation.replace(/\s/g, '') === '') {
+      setHomeLocationErrorMessage('O nome do ambiente deve ser informado');
+      setHomeLocationError(true);
+      return;
+    }
+    const oneSpace = ' ';
+    const clearHomeLocationName = () => {
+      const removeSpace = str => str.replace(/\s\s/g, oneSpace);
+      let str = removeSpace(homeLocation);
+      while (str.indexOf('  ') > -1) {
+        str = removeSpace(str);
+      }
+      return str.trim();
+    }
+    const homeLocationKey = `${selectedFloor} - ${clearHomeLocationName()}`;
+    if (locations[homeLocationKey]) {
+      setHomeLocationErrorMessage(`O nome "${homeLocationKey}" já existe. Remova-o, ou escolha outro nome.`);
+      setHomeLocationError(true);
+      return;
+    }
     addLocation({ 
-      [`${selectedFloor} - ${homeLocation}`]: { 
+      [homeLocationKey]: { 
         I2CKeyPad: changeEmptyToZero(I2CKeyPad), 
         multiplexedKeyPad: changeEmptyToZero(multiplexedKeyPad), 
         point: changeEmptyToZero(point), 
         pulser: changeEmptyToZero(pulser), 
         floor: selectedFloor,
-        locationName: homeLocation
+        locationName: clearHomeLocationName()
       }});
       setHomeLocation('');
       setI2CKeyPad('');
       setMultiplexedKeyPad('');
       setPoint('');
       setPulser('');
-  }
+    }
 
   return (
     <>
@@ -60,7 +83,7 @@ export default function HomeLocationForm({ addLocation, selectedFloor }) {
 
       <Hidden status={(!addLocationStatusButton)}>
         <Box sx={{ minWidth: 120 }}>
-          <TextField onChange={handleHomelocation} value={homeLocation} id="standardd-basic" label="Local da casa" variant="standard" fullWidth />
+          <TextField onChange={handleHomelocation} error={homeLocationError} helperText={homeLocationError&&homeLocationErrorMessage} value={homeLocation} id="standardd-basic" label="Local da casa" variant="standard" fullWidth />
           <TextField onChange={handleI2CKeyPad} value={I2CKeyPad} id="stasndasrd-basicx" type='number' placeholder='Informe um número' label="Key Pad I2C" variant="standard" />
           <TextField onChange={handleMultiplexedKeyPad} value={multiplexedKeyPad} id="standard-basicx" type='number' placeholder='Informe um número' label="Key Pad Multiplexado" variant="standard" />
           <TextField onChange={handlePoint} value={point} id="sstandard-bsasicx" type='number' placeholder='Informe um número' label="Ponto" variant="standard" />
