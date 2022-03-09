@@ -1,14 +1,25 @@
 'use strict';
 
 function execAccessAnalyzer(context) {
-  function accessAnalyzer(src) {
-    console.log('<<<< ...accessAnalyzer src.name >>>', src.name);
-    return function accessAnalyzer(req, res, next) {
-    console.log('<<<< ...accessAnalyzer running... src.name >>>', src.name);
-    next();
+  function accessAnalyzer(src) {console.log('execAccessAnalyzer: ', src.endpoint)
+    return function accessAnalyzer(req, _, next) {
+      try {
+
+        if (context.Helper.types().isFalse(req.userAuth.isLogin())) {
+          throw src.createError(`É necessário estar logado para acessar esse conteúdo - ${req.userAuth.loginData.message}`, 401);
+        }
+        
+        req.userAuth.src = src;
+        req.userAuth.analyzeAccess();       
+
+        return next();
+
+      } catch(err) {
+        src.error(next, err);
+      }
     }
   }
-  accessAnalyzer.type = 'module';
+  accessAnalyzer.type = 'allModules';
   return accessAnalyzer;
 }
 
