@@ -2,6 +2,7 @@
 
 class Middleware {
   #globalMiddlewares = {};
+  #allModules = [];
   #moduleMiddlewares = {};
   #context;
   constructor(context) {
@@ -16,10 +17,11 @@ class Middleware {
       const middleware = require(`./${file}`)(this.#context);
       const loader = {
         global: () => this.#globalMiddlewares[middleware.name] = middleware,
+        allModules: () => this.#allModules.push(middleware),
         module: () => this.#moduleMiddlewares[middleware.name] = middleware
       };
       if(Types.isNotFunction(loader[middleware.type])) {
-        throw 'The property "type" is mandatory. And should be a string their "global" or "module".';
+        throw `${middleware.name}: The "type" property of middleware is mandatory. And should be a string either "global", "allModules" or "module".`;
       }
       loader[middleware.type]();
     });
@@ -31,6 +33,9 @@ class Middleware {
 
   getModuleMiddleware(middlewareName) {
     return this.#moduleMiddlewares[middlewareName];
+  }
+  getAllModuleMiddlewares() {
+    return this.#allModules;
   }
 }
 

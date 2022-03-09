@@ -42,6 +42,7 @@ class ResourceManager {
   setResource(route) { 
     route.setModuleLowerCaseName(this.#module.lowerCaseName);
     route.setService(this.getService(route.serviceName));
+    route.setMadatoriesMiddlewares(this.#context.Middleware.getAllModuleMiddlewares());
     route.middlewaresNamesList.forEach(middlewareName => {
       route.setMiddleware(this.getMiddleware(middlewareName));
     });
@@ -69,7 +70,7 @@ class ResourceManager {
     return middleware;    
   }
   generateApplicationResourceName(route) {    
-    const arn = `${route.name}_${route.serviceName}@${this.#module.name}_${route.type}`;
+    const arn = `${route.name}_${route.serviceNameInArn}@${this.#module.name}_${route.type}`;
     route.setApplicationResourceName(arn);
   }
 }

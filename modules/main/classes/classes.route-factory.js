@@ -64,6 +64,9 @@ class RouteFatory {
   get displayDescription() {
     return this.#service.displayDescription;
   }
+  get serviceNameInArn() {
+    return this.#service.serviceNameInArn;
+  }
   get arn() {
     return this.#arn;
   }
@@ -92,6 +95,11 @@ class RouteFatory {
   }
   setMiddleware(middleware) {
     this.#middlewares.push(middleware(this));
+  }
+  setMadatoriesMiddlewares(middlewares) {
+    middlewares.forEach(mid => {
+      this.setMiddleware(mid);
+    });
   }
   setApplicationResourceName(arn) {
     this.#arn = arn;

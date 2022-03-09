@@ -1,11 +1,12 @@
 'use strict';
 
 class ServiceFactory {
-  #data; #name; #nameType;
-  constructor(exec, type, displayDescription) {
+  #data; #name; #nameType; #permissions;
+  constructor(exec, type, displayDescription, permissions = []) {
     this.#name = Object.getOwnPropertyDescriptor(exec, 'name').value
     this.#data = { displayDescription, type, exec };
     this.#nameType = `${this.#name}_${this.#data.type}`;
+    this.#permissions = this.generatePermissionsName(permissions);
   }
   get name() {
     return this.#name;
@@ -24,6 +25,15 @@ class ServiceFactory {
   }
   get data() {
     return this.#data
+  }
+  get serviceNameInArn() {
+    return this.#name + this.#permissions;
+  }
+  generatePermissionsName(permissions) {
+    if (permissions.length === 0) {
+      return '';
+    }
+    return `+${permissions.join('+')}`;
   }
 
 }
