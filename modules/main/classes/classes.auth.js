@@ -3,12 +3,12 @@
 class Auth {
   #bcrypt = require('bcryptjs');
   #jwt = require('jsonwebtoken');
-  #data = {};
+  #loginData = {};
   constructor() {
-    this.#data.loginStatus = false;
+    this.#loginData.loginStatus = false;
   }
-  get user() {
-    return this.#data.user;
+  get loginData() {
+    return this.#loginData;
   }
   generateToken({ param = {}, secret = process.env.JWT_SECRET } = {}) {
     return this.#jwt.sign(param, secret, { expiresIn: 86400 });
@@ -23,25 +23,13 @@ class Auth {
     return this.#bcrypt.compare(str, hashedPass);
   }
   setErrorMessage(msg) {
-    this.#data.message = msg;
+    this.#loginData.message = msg;
   }
   setLoginStatus(bool = false) {
-    this.#data.loginStatus = bool;
-  }
-  setUserData(userData) {
-    this.#data.user = userData;
+    this.#loginData.loginStatus = bool;
   }
   isLogin() {
-    return this.#data.loginStatus;
-  }
-  getUserData() {
-    return this.#data.user;
-  }
-  addData({ propertyName, value }) {
-    this.#data[propertyName] = value;
-  }
-  getProperty(property) {
-    return this.#data[property];
+    return this.#loginData.loginStatus;
   }
 }
 
