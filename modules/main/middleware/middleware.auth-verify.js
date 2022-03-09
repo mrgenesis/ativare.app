@@ -1,11 +1,11 @@
 'use strict';
 
 function setContextToAuthMiddleware(context) {
-  const { Auth } = context.Classes;
+  const { UserAuth } = context.ExtendedClass;
 
   function authVerify(req, _, next) {
     const authHeader = req.headers.authorization;
-    req.userAuth = new Auth();
+    req.userAuth = new UserAuth();
     
     if (!authHeader) {
       req.userAuth.setErrorMessage('No token provided.');
@@ -26,7 +26,6 @@ function setContextToAuthMiddleware(context) {
         
     try {
       const decoded = req.userAuth.verifyToken({ token });
-      req.userAuth.setLoginStatus(true);
       req.userAuth.setUserData(decoded);      
       return next();
     } catch (err) {
