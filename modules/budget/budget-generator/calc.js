@@ -1,19 +1,25 @@
 'use strict';
 
 class BudgetGenerator {
-  #promiseAll; #materialsAll; 
-  constructor(budgetPromise, materialPromise) {
+  #promiseAll; #materialsAll; #src;
+  constructor(src, budgetPromise, materialPromise) {
+    this.#src = src;
     this.#promiseAll = Promise.all([budgetPromise, materialPromise]); 
     this.keys = { floors: [], homeLocations: {} };
     this.details = new (require('./details-creator'))();
+    this.result = {};
   }
   promisesAll() {
     return this.#promiseAll;
   }
-  setResult(result) {
+  setResult(result, permissionsExplicitStatus, currentUserCode) {
     this.budget = result[0];
     this.#materialsAll = result[1];
-    this.setKeys();
+    this.permissionsExplicitStatus = permissionsExplicitStatus;
+    if (this.permissionsExplicitStatus.seeAllBudgets === true || this.budget.own.code === currentUserCode) {
+      return this.setKeys();
+    }
+    throw this.#src.createError(`Certifique-se de que seu usuário tem a permissão para ver todos os orçamentos.`, 400);
   }
   setKeys() {
     this.keys.floors = Object.keys(this.budget.items);
@@ -69,6 +75,15 @@ class BudgetGenerator {
     this.details.setTotals();
     this.details.addPercent(this.budget.customer.percent);
   }
+  getResult() {
+    const { basic, privateDetails } = this.permissionsExplicitStatus;
+    if (basic !== true) {
+      throw this.#src.createError(`É necessário ter acesso ao recurso básico do orçamento para conseguir visualizá-lo.`, 400);
+    }
+    this.result = this.getBasicBudgetProperties();
+    this.getPrivateDetails(privateDetails);
+    return this.result;
+  }
   getBasicBudgetProperties() {
     const budget = {};
     budget.customer = this.budget.customer;
@@ -80,20 +95,10 @@ class BudgetGenerator {
     budget.own = this.budget.own;
     return budget;
   }
-  getAllowedItems(propertiesList) {
-    const responseView = {
-      basicBudgetView: this.getBasicBudgetProperties(),
-      privateDetails: this.details
-    };
-    let resultResponse = {};
-    
-    propertiesList.forEach(property => {
-      if (property === 'basicBudgetView') {        
-        return resultResponse = { ...responseView[property] };
-      }
-      resultResponse[property] = responseView[property];
-    });
-    return resultResponse;
+  getPrivateDetails(privateDetails) {
+    if (privateDetails === true) {
+      this.result.privateDetails = this.details;
+    }
   }
 }
 

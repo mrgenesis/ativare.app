@@ -1,7 +1,7 @@
 'use strict';
 
 function execAccessAnalyzer(context) {
-  function accessAnalyzer(src) {console.log('execAccessAnalyzer: ', src.endpoint)
+  function accessAnalyzer(src) {
     return function accessAnalyzer(req, _, next) {
       try {
 

@@ -6,19 +6,18 @@ function getContextToFindByCode(context) {
 
   const Calc = require('../budget-generator/calc');
 
-  async function findByCode(code, allowedItems) {
-    const calc = new Calc(Models.budget.findOne({ code }), Models.material.find({}));
+  async function findByCode(code, userAuth) {
+    
+    const calc = new Calc(this, Models.budget.findOne({ code }), Models.material.find({}));
     return calc.promisesAll().then(values => {
-      try {
-        calc.setResult(values);
-        return calc.getAllowedItems(allowedItems);
-      } catch (err) {
-        throw this.createError(`Erro ao gerar o orçamento ${values[0].code} - ${err.message}`);
-      }
+      const permissionsExplicitStatus = userAuth.getProperty('allowed');
+      const currentUserCode = userAuth.userData.code;
+      calc.setResult(values, permissionsExplicitStatus, currentUserCode);
+      return calc.getResult();
     });
 
   }  
-  return new ServiceFactory(findByCode, 'r', 'Permite ver o orçamento com base no código informado');
+  return new ServiceFactory(findByCode, 'r', 'Permite ver o orçamento com base no código informado', ['basic', 'privateDetails', 'seeAllBudgets']);
 }
 
 module.exports = getContextToFindByCode;
