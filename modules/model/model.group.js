@@ -4,18 +4,20 @@
 const mongoose = require('mongoose');
 
 
-function group() {
+function group() {console.log('\nthis\t', this)
   if (group.cache) {
     return group.cache;
   }
   const groupSchema = new mongoose.Schema({
     name: { type: String, required: true, unique: true },
     users: { type: Array, default: [] },
-    allowed: { type: Array, default: [] }
+    resources: { type: Object, default: {} },
+    fullAccess: { type: String, unique: true },
+    createdAt: { type: Date, default: Date.now() }
   });
-  const group = mongoose.model('group', groupSchema);
+  const Group = mongoose.model('group', groupSchema);
   
-  group.cache = group;
+  group.cache = Group;
   return group.cache;
 }
 

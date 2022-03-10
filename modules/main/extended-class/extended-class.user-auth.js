@@ -1,8 +1,9 @@
 'use strict';
 const setDependece = Auth => class UserAuth extends Auth {
-  #src; #brokeArn; #group; #data = {};
-  constructor() {
+  #src; #brokeArn; #group; #groups; #data = {};
+  constructor(permissionGroups) {
     super();
+    this.#groups = permissionGroups;
     this.#data.loginStatus = false;
   }
   get user() {
@@ -98,23 +99,8 @@ const setDependece = Auth => class UserAuth extends Auth {
     return this.#data[property];
   }
   
-  getGourp(name) { // TODO: este objeto retonado nesta função deve ser amazenado no banco de dados e ficar disponível em cache escalavel
-    const groups = [
-      {
-        name: 'admin',
-        users: ['U1'],
-        fullAccess: 'allowed'
-      },
-      {
-        name: 'arquiteto',
-        users: ['U2'],
-        resources: {
-          Budget_r: [':budgetId_findByCode+basic'],
-          Product_r: ['automation_find'],
-        }
-      },
-    ];
-    return groups.find(group => group.name === name);
+  getGourp(name) {
+    return this.#groups.find(group => group.name === name);
   }
 }
 

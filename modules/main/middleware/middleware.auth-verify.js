@@ -5,7 +5,7 @@ function setContextToAuthMiddleware(context) {
 
   function authVerify(req, _, next) {
     const authHeader = req.headers.authorization;
-    req.userAuth = new UserAuth();
+    req.userAuth = new UserAuth(context.permissionGroups);
     
     if (!authHeader) {
       req.userAuth.setErrorMessage('No token provided.');

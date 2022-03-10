@@ -45,6 +45,7 @@ class InitSystem {
 
     await this.loadDatabase();
     this.loadModels();
+    this.#context.permissionGroups = await this.loadPermissionGroups();
     this.loadRoutes();
     this.#AppModule.addErrorHandler();
 
@@ -56,6 +57,11 @@ class InitSystem {
         this.#context.model = new m();
       }
     });
+  }
+  loadPermissionGroups() {
+    // TODO: o resultado deste item deve ser atualizado em realtime
+    // para evitar ter que reiniciar o app quando o grupo for atualizado
+    return this.#context.model.group().find({});
   }
   requireModules(folder) {
     const folders = this.#context
