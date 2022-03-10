@@ -26,7 +26,7 @@ function setContextToAuthMiddleware(context) {
         
     try {
       const decoded = req.userAuth.verifyToken({ token });
-      req.userAuth.setUserData(decoded);      
+      req.userAuth.user = decoded;
       return next();
     } catch (err) {
       req.userAuth.setErrorMessage('Invalid token.');

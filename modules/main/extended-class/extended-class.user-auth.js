@@ -6,8 +6,12 @@ const setDependece = Auth => class UserAuth extends Auth {
     this.#groups = permissionGroups;
     this.#data.loginStatus = false;
   }
-  get user() {
-    return this.#data.user;
+  set user(userData) {
+    this.#data.user = userData;
+    this.setLoginStatus(true);
+  }
+  get userData() {
+    return this.#data.user;    
   }
   set src(src) {
     this.#src = src;
@@ -28,10 +32,6 @@ const setDependece = Auth => class UserAuth extends Auth {
     const basicActionAndPermissions = name.split('+');
     const basicAction = basicActionAndPermissions.shift();
     return { basicAction, permissions: basicActionAndPermissions };
-  }
-  setUserData(userData) {
-    this.#data.user = userData;
-    this.setLoginStatus(true);
   }
   analyzeAccess() {
     this.#group = this.getGourp(this.#data.user.group);
