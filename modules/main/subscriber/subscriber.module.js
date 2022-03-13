@@ -9,12 +9,33 @@ class Subscriber {
     const EventEmitter = require('events');
     const ee = new EventEmitter();
 
-    ee.on('send_email', data => this.sendEmail(data));
+    ee.on('send_email', (body, data) => this.sendEmail(body, data));
     ee.on('app_error', err => this.appError(err));
     return ee;
   }
-  sendEmail(data) {
-    console.log('Simulação do e-mail enviado. Dados:', data);
+  sendEmail(body, data) {
+    const sender = require('./subscriber.sender');
+    const params = {
+      Destination: {
+      ToAddresses: [ ...data.to ],
+        CcAddresses: [ ...data.cc ],
+      },
+      Message: {
+        Body: {
+          Text: {
+           Charset: "UTF-8",
+           Data: JSON.stringify(body)
+          }
+         },
+         Subject: {
+          Charset: 'UTF-8',
+          Data: data.subject
+         }
+        },
+      Source: 'ativare@systems.webservico.net', // TODO: colocar o email de origem no arquivo de configuração
+      ReplyToAddresses: [ ...data.replyTo ],
+    };
+    sender(params);
   }
   appError(err) {
     const AppError = this.#context.AppError;

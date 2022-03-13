@@ -42,10 +42,11 @@ class ExpressApp {
     this.#app.use(function errorHandler(err, req, res, next) {
       const send = data => ({ AppError: data });
       subscriber.emit('app_error', err);
-      if (err.isAppError) {
-        return res.status(err.statusCode).json(send(err.response()));
+      if (err.statusCode >= 500) {
+        subscriber.emit('send_email', err, { to: ['support@webservico.zohodesk.com'], cc: [], subject: 'Erro desconhecido gerado na API Ativare', replyTo: [req.userAuth.userData.email] });
+        return res.status(500).json(send({ message: `Erro desconhecido. Foi aberto um chamado automaticamente. Em breve você receberá uma resposta em seu e-mail cadastrado. - ${err.message}`, errorId: err.errorId }));
       }
-      res.status(500).json(send({ message: `Erro desconhecido. O log precisa ser analisado para saber mais detalhes - ${err.message}`, errorId: err.errorId }));
+      res.status(err.statusCode).json(send(err.response()));
     });
   }
 
