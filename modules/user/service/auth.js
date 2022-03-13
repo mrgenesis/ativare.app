@@ -7,7 +7,7 @@ module.exports = function setContext(context) {
 
   async function auth(email, password) {
     const user = await context.model.user.findOne({ email }).select('+password');
-    let tokenUser = { group: user.group, code: user.code, _id: user._id, name: user.name };
+    let tokenUser = { group: user.group, code: user.code, _id: user._id, name: user.name, email: user.email };
     let responseUser = { email: user.email, name: user.name, code: user.code };
 
     if (!user) {
