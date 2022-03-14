@@ -8,8 +8,9 @@ module.exports = function setErrorModule(errorModule) {
     const Module = this;
     const name = Module.constructor.name;
     
-    Module.errorGenerator = function errorGenerator(message, statusCode, arn) {
-      return new errorModule.appError({ name, message, statusCode, arn });
+    Module.errorGenerator = function errorGenerator(err) {
+      err.name = name;
+      return new errorModule.appError(err);
     }
     Module.errorFormat = function errorFormat(message, statusCode) {
       return { message, statusCode };

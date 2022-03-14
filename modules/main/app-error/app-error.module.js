@@ -4,8 +4,14 @@
 class AppError {
   constructor(context) {
     this.appError = require('./app-error.app-error');
-    this.errorModuleFactory = require('./app-error.error-module-factory')(this);  
-    this.unknowledge = require('./app-error.unknowledge');
+    this.errorModuleFactory = require('./app-error.error-module-factory')(this);
+  }
+  createError(err, statusCode) {
+    return {
+      message: err.message,
+      statusCode: statusCode,
+      stack: err.stack,
+    }
   }
 }
 
