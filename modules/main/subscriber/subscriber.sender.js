@@ -7,11 +7,12 @@ module.exports = function sender(params) {
   const ses = new AWS.SES({ apiVersion: '2010-12-01' });
   const send = ses.sendEmail(params);
   return send.promise()
-    .then(function(data) {
-      return data;
+    .then(function(_) {
+      return null;
     })
     .catch(function(err) {
       console.error(err);
+      return err;
     });
 
 }
