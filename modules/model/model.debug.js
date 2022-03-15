@@ -10,6 +10,7 @@ function debug() {
     errorId: { type: String, unique: true },
     rawData: { type: Object },
     message: { type: String },
+    createdAt: { type: Date, default: (new Date()).toUTCString() },
   });
   const Debug = mongoose.model('debug', debugSchema);
   
