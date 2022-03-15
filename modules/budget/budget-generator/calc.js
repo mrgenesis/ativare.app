@@ -1,25 +1,17 @@
 'use strict';
 
 class BudgetGenerator {
-  #promiseAll; #materialsAll; #src;
-  constructor(src, budgetPromise, materialPromise) {
-    this.#src = src;
-    this.#promiseAll = Promise.all([budgetPromise, materialPromise]); 
+  #materialsAll; #context;
+  constructor({ context, budget, materialsAll, permissionsExplicitStatus }) {
+    this.#context = context;
+    this.budget = budget;
+    this.#materialsAll = materialsAll;
+    this.permissionsExplicitStatus = permissionsExplicitStatus;
+
     this.keys = { floors: [], homeLocations: {} };
     this.details = new (require('./details-creator'))();
     this.result = {};
-  }
-  promisesAll() {
-    return this.#promiseAll;
-  }
-  setResult(result, permissionsExplicitStatus, currentUserCode) {
-    this.budget = result[0];
-    this.#materialsAll = result[1];
-    this.permissionsExplicitStatus = permissionsExplicitStatus;
-    if (this.permissionsExplicitStatus.seeAllBudgets === true || this.budget.own.code === currentUserCode) {
-      return this.setKeys();
-    }
-    throw this.#src.createError(`Certifique-se de que seu usuário tem a permissão para ver todos os orçamentos.`, 400);
+    this.setKeys();
   }
   setKeys() {
     this.keys.floors = Object.keys(this.budget.items);
@@ -78,7 +70,7 @@ class BudgetGenerator {
   getResult() {
     const { basic, privateDetails } = this.permissionsExplicitStatus;
     if (basic !== true) {
-      throw this.#src.createError(`É necessário ter acesso ao recurso básico do orçamento para conseguir visualizá-lo.`, 400);
+      throw this.#context.AppError.createError(new Error(`É necessário ter acesso ao recurso básico do orçamento para conseguir visualizá-lo.`), 400);
     }
     this.result = this.getBasicBudgetProperties();
     this.getPrivateDetails(privateDetails);
