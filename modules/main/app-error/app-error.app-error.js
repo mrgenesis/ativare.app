@@ -3,12 +3,13 @@
 class AppError extends Error {
   constructor(err) {
     super(err.message);
-    this.errorId = Date.now() + '.' + (Date.now()).toString(36) + Math.random().toString(36);
+    this.errorId = (Date.now()).toString(36) + Math.random().toString(36);
     this.name = err.name || this.constructor.name;
     this.statusCode = err.statusCode || 500;
-    this.stack = err.stack || (new Error).stack;
+    (err.stack) ? this.stack = err.stack : '';
     this.arn = err.arn;
     this.isAppError = true;
+    this.changeEnumerablePropertiesToTrue();
   }
   response() {
     return {
@@ -18,6 +19,10 @@ class AppError extends Error {
       message: this.message,
       statusCode: this.statusCode
     }
+  }
+  changeEnumerablePropertiesToTrue() {
+    Object.defineProperty(this, 'message', { enumerable: true });
+    Object.defineProperty(this, 'stack', { enumerable: true });
   }
 }
 
