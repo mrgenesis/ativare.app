@@ -72,7 +72,8 @@ class RouteFatory {
   }
   setErrorFactory(generator) {
     this.error = (next, err) => {
-      const e = generator(err.message, err.statusCode, this.arn);
+      err.arn = this.arn;
+      const e = generator(err);
       return next(e);
     }
   }

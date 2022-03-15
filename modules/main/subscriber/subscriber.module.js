@@ -14,6 +14,7 @@ class Subscriber {
     return ee;
   }
   sendEmail(body, data) {
+    //return;
     const sender = require('./subscriber.sender');
     const params = {
       Destination: {
@@ -24,7 +25,7 @@ class Subscriber {
         Body: {
           Text: {
            Charset: "UTF-8",
-           Data: JSON.stringify(body)
+           Data: JSON.stringify(body, null, '  ')
           }
          },
          Subject: {
@@ -35,19 +36,24 @@ class Subscriber {
       Source: 'ativare@systems.webservico.net', // TODO: colocar o email de origem no arquivo de configuração
       ReplyToAddresses: [ ...data.replyTo ],
     };
-    sender(params);
+    sender(params).then(err => {
+      if(err) {
+        this.appError(err);
+      }
+    });
   }
   appError(err) {
     const AppError = this.#context.AppError;
-    let unknowledge;
+    let appError;
     try {
       if (!err.isAppError) {
-        unknowledge = AppError.unknowledge(err);
-        err.errorId = unknowledge.errorId;
+        appError = new AppError.appError(err);
+        err.errorId = appError.errorId;
       }
-      this.#context.model.debug().create({ errorId: err.errorId, message: err.message, rawData: err });
+      // TODO salvar isso no S3 por meio de um recuros que deve ser adicionado ao userAuth
+      this.#context.model.debug().create({ errorId: err.errorId, rawData: appError || err });
     } catch (e) {
-      console.log('Não não possível gravar o erro no banco de dados.', e);
+      console.log('Não foi possível gravar o erro no banco de dados.', e);
     }
   }
 }
