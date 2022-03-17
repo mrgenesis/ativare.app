@@ -2,6 +2,13 @@
 
 function types() {
   class TypesModule {
+    expect(x) {
+      this.expected = x;
+      return this;
+    }
+    tellMe() {
+      return this.deepTypeof(this.expected);
+    }
     deepTypeof(mixed) {
       const type = typeof mixed;
     
@@ -16,6 +23,9 @@ function types() {
     isArray(arr) {
       return Array.isArray(arr);
     }
+    toBeArray() {
+      return this.isArray(this.expected);
+    }
 
     isFloat(theFloat) {
       if (typeof theFloat === 'number') {
@@ -26,6 +36,9 @@ function types() {
 
     isFunction(fn) {
       return typeof fn === 'function';
+    }
+    toBeFunction() {
+      return this.isFunction(this.expected);
     }
     isNotFunction(x) {
       return !this.isFunction(x);
