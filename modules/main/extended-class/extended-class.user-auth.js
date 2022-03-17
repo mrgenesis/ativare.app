@@ -41,19 +41,19 @@ const setDependece = Auth => class UserAuth extends Auth {
   }
   throwErrorIfgroupNotExists(groupResultSearch) {
     if (!groupResultSearch) {
-      throw this.#src.createError(`O grupo com nome "${this.#data.user.group}" não existe.`, 400);
+      throw this.#context.AppError.createError(new Error(`O grupo com nome "${this.#data.user.group}" não existe.`), 400);
     }
   }
   throwErrorIfUserNotFoundInGroup(groupResultSearch) { 
     if (groupResultSearch.users.indexOf(this.#data.user.code) === -1) {
-      throw this.#src.createError(`O usuário "${this.#data.user.code}" está dizendo que pertence não pertence ao grupo ${this.#data.user.group}, mas seu nome não consta na lista.`, 400);
+      throw this.#context.AppError.createError(new Error(`O usuário "${this.#data.user.code}" está dizendo que pertence ao grupo ${this.#data.user.group}, mas seu nome não consta na lista do grupo.`), 400);
     }
   }
   throwErrorIfUserIsNotAllowed() {
     if (this.isUserAllowed()) {
       return;
     }
-    throw this.#src.createError(`Acesso negado.`, 403);
+    throw this.#context.AppError.createError(new Error(`Acesso negado.`), 403);
   }
   isUserAllowed() {
     if(this.#group.fullAccess === 'allowed') {
@@ -94,7 +94,7 @@ const setDependece = Auth => class UserAuth extends Auth {
       this.addData({ propertyName: 'allowed', value: permissionsExplicitStatus });
       return isAllowed;
     }
-    throw this.#src.createError(`O seu usuário não tem permissão para acessar o recurso "${this.#brokeArn.resourceTypedName}".`, 400);
+    throw this.#context.AppError.createError(new Error(`O seu usuário não tem permissão para acessar o recurso "${this.#brokeArn.resourceTypedName}".`), 400);
   }
   getProperty(property) {
     return this.#data[property];
