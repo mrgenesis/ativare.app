@@ -1,25 +1,24 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import instance from '../../services/api';
 import Loader from '../Utils/Loader';
 import UtilsList from '../Utils/List';
 import { routesConfig } from '../../constants/routesConfig';
 
-export default function BudgetList() {
-  const [isLoaded, setIsLoaded] = React.useState(false);
-  const [response, setResponse] = React.useState([]);
+import { Context } from '../../store/Store';
+import { useGetApiData } from '../../hooks/useGetApiData';
+import MessageStatus from '../Utils/MessageStatus';
 
+
+export default function BudgetList() {
+  const [response, setResponse] = React.useState([]);
+  const [state, dispatch] = React.useContext(Context);
+  const getData = useGetApiData({ type: 'get', endPoint: routesConfig.budget.home.api, dispatch });
+  const [runningApi, setRunningApi] = React.useState('stopped');
   React.useEffect(() => {
-    if (!isLoaded) {
-      instance.get(routesConfig.budget.home.api)
-        .then(res => {
-          setIsLoaded(true);
-          if (res.status === 200) {
-            setResponse(res.data);
-          }
-        });
+    if (runningApi === 'stopped') {
+      getData({ params: {}, getResponse: setResponse, handleStatus: setRunningApi });
     }
-  }, [isLoaded, response]);
+  }, [runningApi, getData]);
 
   const columns = [
     {
@@ -39,8 +38,16 @@ export default function BudgetList() {
     : [];
 
   return (
-    <div style={{ height: 400, width: '100%' }}>
-      {isLoaded ? <UtilsList rows={rows} columns={columns} pageSize={5} /> : <Loader />}
-    </div>
+    <>
+      <MessageStatus
+        status={!state.error}
+        loading={false}
+        severity={'error'}
+        message={state.message}
+      />
+      <div style={{ height: 400, width: '100%' }}>
+        {(runningApi === 'done') ? <UtilsList rows={rows} columns={columns} pageSize={5} /> : <Loader />}
+      </div>      
+    </>
   );
 }
