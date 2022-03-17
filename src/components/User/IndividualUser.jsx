@@ -22,7 +22,6 @@ export default function UserItem() {
         });
     }
   }, [isLoaded, userCode]);
-  console.log(userCode)
   return (
     finished ? <IndividualItem response={response} type='user' /> : <Loader />
   );
