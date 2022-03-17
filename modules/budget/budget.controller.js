@@ -14,7 +14,7 @@ module.exports = function budgetController(resources) {
   });
   
   router[_r.method](_r.relativePath, _r.middlewares, async (req, res, next) => {
-    const newBudgetId = await _r.service({});
+    const newBudgetId = await _r.service({}, req.userAuth);
     try {
       res.status(200).json(newBudgetId);
     } catch(err) {
