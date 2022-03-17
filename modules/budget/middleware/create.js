@@ -29,8 +29,6 @@ function setContextToTtMiddleware(context) {
   return function create(src) {
     
     return function create(req, _, next) {
-      console.log('Middleware create running.....')
-      
       const { productsList, own, customer } = req.body;
       const budget = new Budget(productsList);
 
@@ -39,6 +37,7 @@ function setContextToTtMiddleware(context) {
       req.userAuth.addData({ propertyName: 'budget', value: { items, own, customer }});
       next();
     }
+    
   }
 }
 module.exports = setContextToTtMiddleware;
