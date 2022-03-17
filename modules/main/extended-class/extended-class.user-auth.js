@@ -1,9 +1,9 @@
 'use strict';
 const setDependece = Auth => class UserAuth extends Auth {
-  #src; #brokeArn; #group; #groups; #data = {};
-  constructor(permissionGroups) {
+  #context; #src; #brokeArn; #group; #data = {};
+  constructor(context) {
     super();
-    this.#groups = permissionGroups;
+    this.#context = context;
     this.#data.loginStatus = false;
   }
   set user(userData) {
@@ -75,32 +75,33 @@ const setDependece = Auth => class UserAuth extends Auth {
   getAllowedAccess() {
     let isAllowed = false;
     const resource = this.#group.resources[this.#brokeArn.resourceTypedName];
-    if (!resource) {
-      throw this.#src.createError(`O recurso com nome "${this.#brokeArn.resourceTypedName}" não existe.`, 400);
+    if (Array.isArray(resource)) {
+      const matchOneItem = a => (resource.indexOf(a) > (-1));
+      
+      const permissionsExplicitStatus = {};
+      const basicAction = this.#brokeArn.basicAction;
+      isAllowed = matchOneItem(basicAction);
+      
+      this.#brokeArn.permissions.forEach(permissionName => {
+        const action = `${basicAction}+${permissionName}`;
+        if(matchOneItem(action)) {
+          permissionsExplicitStatus[permissionName] = true;
+          isAllowed = true;
+          return;
+        }      
+        permissionsExplicitStatus[permissionName] = false;
+      });
+      this.addData({ propertyName: 'allowed', value: permissionsExplicitStatus });
+      return isAllowed;
     }
-
-    const permissionsExplicitStatus = {};
-    const basicAction = this.#brokeArn.basicAction;
-    isAllowed = (resource.indexOf(basicAction) > (-1));
-
-    this.#brokeArn.permissions.forEach(permissionName => {
-      const action = `${basicAction}+${permissionName}`;
-      if ((resource.indexOf(action) > (-1))) {
-        permissionsExplicitStatus[permissionName] = true;
-        isAllowed = true;
-        return;
-      }      
-      permissionsExplicitStatus[permissionName] = false;
-    });
-    this.addData({ propertyName: 'allowed', value: permissionsExplicitStatus });
-    return isAllowed;
+    throw this.#src.createError(`O seu usuário não tem permissão para acessar o recurso "${this.#brokeArn.resourceTypedName}".`, 400);
   }
   getProperty(property) {
     return this.#data[property];
   }
   
   getGourp(name) {
-    return this.#groups.find(group => group.name === name);
+    return this.#context.permissionGroups.find(group => group.name === name);
   }
 }
 
