@@ -27,8 +27,9 @@ function appConfig(context) {
         "password": process.env.DB_PASS
       }
     },
+    "dbBrand": "mongodb",
     "rootProject": ROOT_PROJECT,
-    "modulesFolder": `${ROOT_PROJECT}/modules`,
+    "modulesFolder": `${ROOT_PROJECT}/src/modules`,
     "dotEnvDev": `${ROOT_PROJECT}/.env.development`,
     "appFolderName": 'express-app',
     // mainModuleFolderPath,
