@@ -1,39 +1,53 @@
 'use strict';
 const express = require('express');
 const session = require('express-session');
+const cookieParse = require('cookie-parser');
+const morgan = require('morgan');
+
 const sessionConfig = {
   secret: process.env.EXPRESS_SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: {
-      secure: process.env.NODE_ENV === 'production'
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax'
   }
 };
 
 class ExpressApp {
   #app;
   #context;
-  constructor(context) {
+  #appConfig;
+  constructor(context, appConfig) {
     this.#context = context;
+    this.#appConfig = appConfig;
     this.#app = express();
+    this.#app.use(cookieParse());
     this.#app.use(session(sessionConfig));
+
+    this.#app.use(morgan('combined'));
     this.#app.set('applicationResources', {});
     this.#app.use(express.json());
     this.#app.use(express.urlencoded({ extended: false }));
-    this.setMiddlewares();
+    
+    
+    this.includeCredentials();
     this.activeCorsIfIsDev();
+    this.setMiddlewares();
   }
 
   getApp() {
     return this.#app;
   }
-  setMiddlewares() {
+  setMiddlewares() { // TODO: definir appConfig dentro de context
     const { Middleware } = this.#context;
-    const globalMiddlewaresList = Middleware.getGlobalMiddlewares();
-    this.#app.use(globalMiddlewaresList);
+    const configuredGlobalMiddlewaresList = Middleware.getGlobalMiddlewares().map(middlewareWithConfig => {
+      return middlewareWithConfig(this.#appConfig);
+    });
+    this.#app.use(configuredGlobalMiddlewaresList);
   }
   setRoute(module) {
-    this.#app.use(module.entry, module.getRouter());
+    this.#app.use(module.entry, module.getRouter(this.#appConfig));
   }
   setApplicationResources(module) {
     this.#app.get('applicationResources')[module.name] = module.getResourcesAll();
@@ -41,22 +55,32 @@ class ExpressApp {
   getApplicationResources(name) {
     return this.#app.get('applicationResources')[name];
   }
+  includeCredentials() {
+    this.#app.use((_, res, next) => {
+      res.setHeader('Access-Control-Allow-Credentials', true);
+      next();
+    });
+  }
   activeCorsIfIsDev() {
-    if(process.env.NODE_ENV === 'development') {
-      const cors = require('cors');
-      this.#app.use(cors());
+    if(process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
+      console.log(`>>>>>>>>>>>>>>> ...ment environment: request origin from...`);
+      this.#app.use((req, res, next) => {
+        const origin = req.headers.origin
+        const allowed = /http:\/\/localhost:[\d]{4}/;
+        console.log(`Dev|Test environment: request origin from "${origin}"`);
+          if (allowed.test(origin)) {
+            res.setHeader('Access-Control-Allow-Origin', origin);
+          }
+          return next();
+      });
     }
+    console.log('Access-Control-Allow-Origin NÃO foi ativado. Ative isso no servidor.');
   }
   addErrorHandler() {
-    const subscriber = this.#context.Subscriber;
-    this.#app.use(function errorHandler(err, req, res, next) {
-      const send = data => ({ AppError: data });
-      subscriber.emit('app_error', err);
-      if (err.statusCode >= 500) {
-        subscriber.emit('send_email', err, { to: ['support@webservico.zohodesk.com'], cc: [], subject: 'Erro desconhecido gerado na API Ativare', replyTo: [req.userAuth.userData.email] });
-        return res.status(500).json(send({ message: `Erro desconhecido. Foi aberto um chamado automaticamente. Em breve você receberá uma resposta em seu e-mail cadastrado. - ${err.message}`, errorId: err.errorId }));
-      }
-      res.status(err.statusCode).json(send(err.response()));
+    const AppError = this.#context.AppError;
+    this.#app.use(function errorHandler(err, _, res, __) {
+      const error = AppError.formatter(err);
+      res.status(err.statusCode).json(error.response());
     });
   }
 
