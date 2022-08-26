@@ -3,13 +3,13 @@
 function types() {
   class TypesModule {
     expect(x) {
-      this.expected = x;
+      this.reference = x;
       return this;
     }
     tellMe() {
-      return this.deepTypeof(this.expected);
+      return this.deepTypeof(this.reference);
     }
-    deepTypeof(mixed) {
+    deepTypeof(mixed = this.reference) {
       const type = typeof mixed;
     
       if (this.isNull(mixed)) {
@@ -19,12 +19,18 @@ function types() {
       }
       return type;
     }
+    toBe(v) {
+      return this.reference === v;
+    }
+    isDifferent(x, y = this.reference) {
+      return x !== y;
+    }
 
     isArray(arr) {
       return Array.isArray(arr);
     }
     toBeArray() {
-      return this.isArray(this.expected);
+      return this.isArray(this.reference);
     }
 
     isFloat(theFloat) {
@@ -38,7 +44,7 @@ function types() {
       return typeof fn === 'function';
     }
     toBeFunction() {
-      return this.isFunction(this.expected);
+      return this.isFunction(this.reference);
     }
     isNotFunction(x) {
       return !this.isFunction(x);
@@ -50,6 +56,9 @@ function types() {
 
     isString(str) {
       return typeof str === 'string';
+    }
+    isNotString(v) {
+      return typeof v !== 'string';
     }
 
     isUndefined(undefinedVelue) {
