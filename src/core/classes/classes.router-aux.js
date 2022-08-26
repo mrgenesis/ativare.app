@@ -6,7 +6,7 @@ class RouterAux {
     this.#folderModule = folderPath;
 
     this.errorFactory = context.AppError.errorModuleFactory;
-    this.errorFactory();
+    this.errorFactory(); // set "errorGenerator" and "errorFormat" property
 
     const { ResourceManager } = context.Classes;
     const Manager = new ResourceManager({ module: this, folderPath, context });    
@@ -24,8 +24,10 @@ class RouterAux {
   setResource(resource) {
     this.#resource = resource;
   }
-  getRouter() {
-    return require(`${this.#folderModule}/${this.lowerCaseName}.controller`)(this.#resource);
+  getRouter(appConfig) { // TODO: appConfig deve constar apenas em context ou resource
+    const controller = require(`${this.#folderModule}/${this.lowerCaseName}.controller`)
+    const route = controller(this.#resource, appConfig);
+    return route;
   }
   getResourcesAll() {
     return this.#resource;
