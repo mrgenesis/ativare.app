@@ -1,9 +1,9 @@
 const Context = require('./context');
 const context = new Context();
 
-const AppError = require('./app-error/app-error.module');
-const appError = new AppError();
-context.addProperty(appError.constructor.name, appError);
+const errorHandler = require('./app-error/app-error.module'); // TODO: mudar de AppError para ErrorHandler
+const appError = errorHandler();
+context.addProperty('AppError', appError);
 
 const Helper = require('./helper/helper.module');
 const helper = new Helper(context);
@@ -23,22 +23,19 @@ context.addProperty(middleware.constructor.name, middleware);
 
 const Subscriber = require('./subscriber/subscriber.module');
 const subscriber = new Subscriber(context);
-context.addProperty(subscriber.constructor.name, subscriber);
+context.addProperty('Subscriber', subscriber);
 
 const Model = require('./model/model.module');
-const db = require('./data/data.module');
+const data = require('./data/data.module');
 const model = new Model();
 context.addProperty('model', model);
 
 const InitSystem = require('./init-system/init-system.module');
 const initSystem = new InitSystem(context);
 
-class Start {
-  constructor({ appConfigPath } = {}) {
-    initSystem.configure(appConfigPath);
-    initSystem.make(db);
-    return initSystem.getApp();
-  }
+function start({ db = data, appConfigPath } = {}) {
+  initSystem.configure(appConfigPath);
+  return initSystem.make(db);
 }
 
-module.exports = Start;
+module.exports = start;

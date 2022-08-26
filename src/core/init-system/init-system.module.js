@@ -7,7 +7,6 @@ class InitSystem {
   constructor(context) { 
     this.#context = context;
     this.applicationResources = {};
-    // this.#context.model = {};
     this.#context.middleware = {};
   }
   getApp() {
@@ -18,6 +17,7 @@ class InitSystem {
     this.getAppConfig = require(appConfigPath);
     this.ifIsLocalhostGetDotEnvInRootProject();
     this.config = this.getAppConfig(this.#context);
+    this.#context.appConfig = this.config;
     this.createApp();
     return this;
   }
@@ -32,33 +32,39 @@ class InitSystem {
     // the app set localhost mode
     const NODE_ENV = process.env.NODE_ENV
         , Types = this.#context.Helper.types()
-        , { existsSync } = require('fs');
+        , { existsSync } = require('fs')
+        , isDev = Types.isUndefined(NODE_ENV) || Types.expect(NODE_ENV).toBe('test');
+
     this.dotEnvDevPath = this.getAppConfig.getDotEnvDev();
-    return Types.isUndefined(NODE_ENV) && existsSync(this.dotEnvDevPath);
+    return isDev && existsSync(this.dotEnvDevPath);
   }
   createApp() {
     const appFolderPath = `${this.config.modulesFolder}/../core/${this.config.appFolderName}/${this.config.appFolderName}.module.js`;
     const AppModule = require(appFolderPath);
-    this.#AppModule = new AppModule(this.#context);
+    this.#AppModule = new AppModule(this.#context, this.config); // TODO: appConfig deve consta apenas em context
   }
-  async make(db) {
+  make(db) {
     this.requireModules(this.config.modulesFolder);
-
-    await this.loadDatabase(db);
-    this.loadModels();
-    this.#context.permissionGroups = await this.loadPermissionGroups();
-    this.loadRoutes();
-    this.#AppModule.addErrorHandler();
-
+    return new Promise((resolve, reject) => {
+      this.loadDatabase(db)
+      .then(() => this.loadModels())
+      .catch(err => reject(err))
+      .then(() => this.loadRoutes())
+      .catch(err => reject(err))
+      .then(() => {
+        this.#AppModule.addErrorHandler();
+        resolve(this.#AppModule.getApp());
+      });
+    });
   }
   requireModules(folder) {
     const folders = this.#context
       .Helper.getFolders(folder)
       .ignore(['main', 'necessary']);
-    folders.namesList().map(name => {
-      const Module = require(`${folder}/${name}/${name}.module`);
-      this.#modulesRequired.push(Module);
-    });
+      folders.namesList().map(name => {
+        const Module = require(`${folder}/${name}/${name}.module`);
+        this.#modulesRequired.push(Module);
+      });
   }  
   loadDatabase(db) {
     return db(this.config.dbBrand).init(this.config.databases[this.config.dbBrand]);
@@ -89,7 +95,7 @@ class InitSystem {
           InitSystem.#AppModule.setRoute(module);
           InitSystem.#AppModule.setApplicationResources(module);
 
-        } catch (e) {
+        } catch (e) {console.log(e)
           const OthersUtils = this.#context.Helper.othersUtils();
           const moduleName = Object.getOwnPropertyDescriptor(Module || getModule, 'name').value;
           // TODO: tratar o erro
