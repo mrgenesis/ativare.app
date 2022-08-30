@@ -5,7 +5,8 @@ function userRoutes(context) {
   const { RouteFactory } = context.Classes;
 
   return [
-    new RouteFactory('authenticate', 'post', [], 'auth')
+    new RouteFactory('authenticate', 'get', [], 'authenticate'),
+    new RouteFactory('receive-aad-data', 'post', [], 'receiveAadData'),
   ];
 }
 

@@ -1,0 +1,10 @@
+{
+  "stateMalformated": "",
+  "withoutCsrfToken": {
+    "state": "e30="
+  },
+  "withCsrfToken": {
+    "state": "e30=",
+    "csrfToken": ""
+  }
+}
