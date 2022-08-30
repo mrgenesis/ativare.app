@@ -4,10 +4,8 @@
 function setContextToAuthMiddleware(context) {
   function access() {    
     return async function access(req, _, next) {
-      const authenticate = '/user/authenticate';
-      const getAadData = '/user/get-aad-data';
-      const isAllowed = (req.path === authenticate) || (req.path === getAadData);
-      if(req.session.isAuthenticated || isAllowed) {
+      const allowededs = ['/user/authenticate', '/user/receive-aad-data'];
+      if(req.session.isAuthenticated || allowededs.some(path => path === req.path)) {
         return next();
       }
       try {
