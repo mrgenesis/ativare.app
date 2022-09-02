@@ -22,7 +22,7 @@ function types() {
     toBe(v) {
       return this.reference === v;
     }
-    isDifferent(x, y = this.reference) {
+    areDifferents(x, y = this.reference) {
       return x !== y;
     }
 

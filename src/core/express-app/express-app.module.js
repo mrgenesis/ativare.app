@@ -8,6 +8,7 @@ const sessionConfig = {
   secret: process.env.EXPRESS_SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
+  name: 'api.server',
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax'
@@ -63,13 +64,14 @@ class ExpressApp {
   }
   activeCorsIfIsDev() {
     if(process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
-      console.log(`>>>>>>>>>>>>>>> ...ment environment: request origin from...`);
+      console.log(`>>>>>>> request origin is actived on localhost.`);
       this.#app.use((req, res, next) => {
         const origin = req.headers.origin
         const allowed = /http:\/\/localhost:[\d]{4}/;
-        console.log(`Dev|Test environment: request origin from "${origin}"`);
+        console.log(`>>>>>>> Dev|Test allowed.test(${origin}) <<${allowed.test(origin)}>>`);
           if (allowed.test(origin)) {
             res.setHeader('Access-Control-Allow-Origin', origin);
+            res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
           }
           return next();
       });

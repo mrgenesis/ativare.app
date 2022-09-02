@@ -5,11 +5,8 @@ class ReqHandler {
   constructor(req) {
     this.#req = req;
   }
-  get codePair() {
-    return {
-      code: this.#req.session.authCodeRequest.code,
-      codeVerifier: this.#req.session.pkceCodes.verifier
-    };
+  get authCodeRequest() {
+    return this.#req.session.authCodeRequest;
   }
   get isAuthenticated() {
     return this.#req.session.isAuthenticated === true;
@@ -22,6 +19,9 @@ class ReqHandler {
     this.#req.session.idToken = tokenResponse.idToken;
     this.#req.session.account = tokenResponse.account;
     this.#req.session.isAuthenticated = true;
+  }
+  getCsrfTokenSession() {
+    return this.#req.session.csrfToken;
   }
 
 }

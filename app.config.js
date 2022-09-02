@@ -54,7 +54,9 @@ function appConfig(context) {
     "modulesFolder": `${ROOT_PROJECT}/src/modules`,
     "dotEnvDev": `${ROOT_PROJECT}/.env.development`,
     "appFolderName": 'express-app',
-    // mainModuleFolderPath,
+    "dataHost": {
+      "frontendBaseUrl": process.env.FRONTEND_BASE_URL
+    },
     ...customConfig
   }
 }

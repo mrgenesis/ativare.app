@@ -16,12 +16,10 @@ class RouteFatory {
       name: this.#name,
       method: this.#method,
       moduleLowerCaseName: this.#moduleLowerCaseName,
-      serviceName: this.#serviceName,
-      middlewaresNamesList: this.#middlewaresNamesList,
-      descriptiom: this.displayDescription,
       middlewares: this.#middlewares,
+      service: this.#service,
+      descriptiom: this.displayDescription,
       arn: this.#arn,
-      types: this.#types,
       error: this.error,
     }
   }
