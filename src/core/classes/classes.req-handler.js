@@ -8,6 +8,9 @@ class ReqHandler {
   get authCodeRequest() {
     return this.#req.session.authCodeRequest;
   }
+  get authCodeRequest() {
+    return { ...this.#req.session.authCodeRequest, codeVerifier: this.#req.session.pkceCodes.verifier };
+  }
   get isAuthenticated() {
     return this.#req.session.isAuthenticated === true;
   }
@@ -23,6 +26,7 @@ class ReqHandler {
   getCsrfTokenSession() {
     return this.#req.session.csrfToken;
   }
+
 
 }
 
