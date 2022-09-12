@@ -16,35 +16,15 @@ export default function Routes() {
   return (
     <BrowserRouter>
       <TopMainMenu />
-      {state.auth.isLogged ?
-        <Switch>
-          <Route exact path="/" component={Homepage} />
-          <Route path="/material" component={Material} />
-          <Route path="/produto" component={Product} />
-          <Route path="/orcamento" component={Budget} />
-          <Route path="/usuario" component={User} />
-        </Switch>
+      {state.authData
+        ? <Switch>
+            <Route exact path="/" component={Homepage} />
+            <Route path="/material" component={Material} />
+            <Route path="/produto" component={Product} />
+            <Route path="/orcamento" component={Budget} />
+            <Route path="/usuario" component={User} />
+          </Switch>
         : <Login />}
     </BrowserRouter>
   );
 }
-
-
-
-
-
-
-////////////////////////////////////////////////////////
-/*function CustomRoute({ isPrivate, ...rest }) {
-  //const { loading, authenticated } = useContext(Context);
-
-  if (loading) {
-    return <h1>Loading...</h1>;
-  }
-
-  if (isPrivate && !authenticated) {
-    return <Redirect to="/login" />
-  }
-
-  return <Route {...rest} />;
-}*/

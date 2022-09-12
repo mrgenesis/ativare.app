@@ -13,6 +13,12 @@ const reducerAuth = (state, action) => {
         },
         error: null
       };
+    case 'SINGIN':
+      localStorage.setItem('authData', JSON.stringify(action.payload));
+      return {
+        ...state,
+        authData: action.payload
+      };
     case 'LOGOUT':
       localStorage.removeItem('authorization');
       localStorage.removeItem('user');

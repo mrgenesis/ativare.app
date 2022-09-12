@@ -53,7 +53,7 @@ export default function MenuAppBar() {
           <Link to='/'><img src='/logo-ativare192.png' width='120px' alt='Logo' /></Link>
           <div className={classes.grow} />
           <div>
-            {state.auth.isLogged && (
+            {state.authData && (
               <>
                 <IconButton
                   aria-label="main menu top bar"

@@ -2,8 +2,14 @@ import React from 'react';
 
 import reducerAuth from '../reducers/reducerAuth';
 
+const secureParse = (obj) => {
+  try { return JSON.parse(obj); }
+  catch(e) { return null; }
+}
+
 const localAuthorization = localStorage.getItem('authorization')
-  , localUser = localStorage.getItem('user');
+  , localUser = localStorage.getItem('user')
+  , authData = secureParse(localStorage.getItem('authData'));
 
 const initialState = {
   auth: {
@@ -11,7 +17,8 @@ const initialState = {
     user: {}
   },
   error: null,
-  message: null
+  message: null,
+  authData
 };
 const Context = React.createContext(initialState);
 
