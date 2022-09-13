@@ -2,15 +2,15 @@ import React from 'react';
 import { Button } from '@material-ui/core';
 import { Context } from '../../store/Store';
 
-import Endpoints from '../../services/endpoints';
-const endpoints = new Endpoints();
+import Services from '../../services/services';
+const services = new Services();
 
 export default function Login() {
   const [, dispatch] = React.useContext(Context);
 
   const singIn = () => {
-    endpoints.singIn().then(payload => {
-      dispatch({ type: 'SINGIN', payload });
+    services.singIn().then(_ => {
+      dispatch({ type: 'SINGIN', payload: services.authData });
     });
   }
   return (

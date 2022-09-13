@@ -1,6 +1,6 @@
 
 const apiConfig = {
-  urlBase: process.env.REACT_APP_URL_API_BASE || "http://localhost:3001/"
+  urlBase: process.env.REACT_APP_URL_API_BASE || "http://localhost:3000/"
 }
 
 const msalAadClientConfig = {
