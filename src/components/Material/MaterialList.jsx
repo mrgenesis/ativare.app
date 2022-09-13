@@ -19,7 +19,6 @@ export default React.memo(function MaterialList() {
     endpoints.getMaterials().then(reqId => {
       const apiRequest = endpoints.getApiRequest(reqId);
       setRunningApi(apiRequest.step);
-      console.log('apiRequest.data', endpoints);
       setResponse(apiRequest.data);
     });
   }, []);
