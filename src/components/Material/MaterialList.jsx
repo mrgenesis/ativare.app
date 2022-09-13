@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useGetApiData } from '../../hooks/useGetApiData';
 import Loader from '../Utils/Loader';
 import UtilsList from '../Utils/List';
 import MessageStatus from '../Utils/MessageStatus';
@@ -8,17 +7,23 @@ import { routesConfig } from '../../constants/routesConfig';
 
 import { Context } from '../../store/Store';
 
-export default function MaterialList() {
+import Services from '../../services/services';
+
+export default React.memo(function MaterialList() {
   const [state, dispatch] = React.useContext(Context);
-  const getMaterialsList = useGetApiData({ type: 'get', endPoint: routesConfig.material.home.api, dispatch });
   const [runningApi, setRunningApi] = React.useState('stopped');
   const [response, setResponse] = React.useState([]);
 
+  const endpoints = new Services(state.authData);
   React.useEffect(() => {
-    if (runningApi === 'stopped') {
-      getMaterialsList({ params: {}, handleStatus: setRunningApi, getResponse: setResponse })
-    }
-  }, [runningApi, getMaterialsList]);
+    endpoints.getMaterials().then(reqId => {
+      const apiRequest = endpoints.getApiRequest(reqId);
+      setRunningApi(apiRequest.step);
+      console.log('apiRequest.data', endpoints);
+      setResponse(apiRequest.data);
+    });
+  }, []);
+
   const columns = [
     {
       field: 'id', headerName: 'Cód', width: 90, renderCell: (params) => (
@@ -54,4 +59,4 @@ export default function MaterialList() {
       </div>
     </>
   );
-}
+});
