@@ -47,7 +47,7 @@ export default class Auth extends Apis {
         resove(data);
       })
       .catch(err => {
-        console.warn("A requisição silenciosa falhou. Abrindo o popup...");
+        console.warn("A requisição silenciosa falhou. Abrindo o popup...", err);
         if(err instanceof this.publicClientApp.InteractionRequiredAuthError) {
           return this.publicClientApp.acquireTokenPopup(this.getAcquireTokenParams())
           .then(data => {

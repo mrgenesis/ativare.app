@@ -1,6 +1,6 @@
 
 export class Apis {
-  #urlBase; #path;
+  #urlBase; #path = '/';
   #options = {
     method: 'get',
     headers: new Headers()
@@ -39,7 +39,7 @@ export class Apis {
   set method(method) {
     this.#options.method = method;
   }
-  request(path = this.#path, options = {}) {
+  request(path = this.#path, options = {}) {console.log('path',path,'options',options)
     const mergedOptions = { ...this.#options, ...options };
     path = this.removeSlash(path);
     return new Promise((resolve, reject) => {

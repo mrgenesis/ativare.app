@@ -26,20 +26,34 @@ export default class Services extends Auth {
     this.reqs[req.id] = req;
     return req.id;
   }
-  resolver(id, payload, converteIn = 'json') {
+  preRequest() {
+    this.setAuthHeaders(this.authData.acquiredToken.accessToken);
+  }
+
+  resolver({id, path, method, body, dataConverter = 'json'}) {
+    this.preRequest();
+    const payload = this.request(path, { method, body });
+    this.reqs[id].step = 'running';
+    this.reqs[id].sentBody = body;
     return new Promise((resolve) => {
-      this.reqs[id].step = 'running';
-      payload.then(data => this.reqs[id].data = data)
-      .then(res => {
-        this.reqs[id].response = res;
-        return res[converteIn]();
+      payload.then(response => {
+        this.reqs[id].response = response;
+        try {
+          return response[dataConverter]();
+        } catch(e) {
+          console.error(`Tentei converter o dado recebido, mas não foi possível. dataConverter=${dataConverter}`);
+          throw e;
+        }
+      })
+      .then(data => {
+        this.reqs[id].data = data;
       })
       .catch(e => this.reqs[id].error = e)
       .finally(() => {
         if (this.reqs[id].error && this.reqs[id].retry) {
           this.reqs[id].retry = false;
           this.acquireToken().then(() => {
-            return this[this.reqs[id].name](id);
+            return this[this.reqs[id].name]({id, body: this.reqs[id].sentBody });
           })
         }
         this.reqs[id].step = 'done';
@@ -48,8 +62,10 @@ export default class Services extends Auth {
     });
   }
 
-  getMaterials(id = this.createApiRequest('getMaterials', 'obter uma lista de materiais')) {
-    this.setAuthHeaders(this.authData.acquiredToken.accessToken);
-    return this.resolver(id, this.request('/material', { method: 'get' }));
+  createBudget({ body, id = this.createApiRequest('createBudget', 'criar um novo orçamento') } = {}) {
+    return this.resolver({ body, id, method: 'post', path: '/budget/create' });
+  }
+  getMaterials({ id = this.createApiRequest('getMaterials', 'obter uma lista de materiais') } = {}) {
+    return this.resolver({id, method: 'get', path: '/material' });
   }
 }
