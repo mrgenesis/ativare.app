@@ -5,21 +5,30 @@ import UtilsList from '../Utils/List';
 import { routesConfig } from '../../constants/routesConfig';
 
 import { Context } from '../../store/Store';
-import { useGetApiData } from '../../hooks/useGetApiData';
 import MessageStatus from '../Utils/MessageStatus';
+
+import Services from '../../services/services';
+
 
 
 export default function BudgetList() {
   const [response, setResponse] = React.useState([]);
   const [state, dispatch] = React.useContext(Context);
-  const getData = useGetApiData({ type: 'get', endPoint: routesConfig.budget.home.api, dispatch });
   const [runningApi, setRunningApi] = React.useState('stopped');
+  const services = React.useMemo(() => new Services(state.authData), [state.authData]);
   React.useEffect(() => {
     if (runningApi === 'stopped') {
-      getData({ params: {}, getResponse: setResponse, handleStatus: setRunningApi });
+      setRunningApi('running');
+      services.getBudgets().then(reqId => {
+        const apiRequest = services.getApiRequest(reqId);
+        setRunningApi(apiRequest.step);
+        if (Services.errorResolver({ apiRequest, dispatch })) {
+          return;
+        }
+        setResponse(apiRequest.data);
+      });
     }
-  }, [runningApi, getData]);
-
+  }, [runningApi, dispatch, services]);
   const columns = [
     {
       field: 'id', headerName: 'Cód', width: 90, renderCell: (params) => (
