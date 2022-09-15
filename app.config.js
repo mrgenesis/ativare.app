@@ -33,20 +33,18 @@ function appConfig(context) {
     },
     "authenticate": {
       "azuread": {
-        "msalConfig": {
-          "auth": {
-            clientId: process.env.CLIENT_ID, // 'Application (client) ID' of app registration in Azure portal - this value is a GUID
-            authority: process.env.CLOUD_INSTANCE + process.env.TENANT_ID, // Full directory URL, in the form of https://login.microsoftonline.com/<tenant>
-            clientSecret: process.env.CLIENT_SECRET // Client secret generated from the app registration in Azure portal
-          },
-          "cache": {
-            cacheLocation: "sessionStorage", // This configures where your cache will be stored
-            storeAuthStateInCookie: false, // Set this to "true" if you are having issues on IE11 or Edge
-          }
-        },
-        "redirectUri": process.env.REDIRECT_URI,
-        "postLogoutRedirectUri": process.env.POST_LOGOUT_REDIRECT_URI,
-        "graphMeEndPoit": process.env.GRAPH_API_ENDPOINT + "v1.0/me"
+        "bearerOptions": {
+          "tenantID": process.env.TENANT_ID,
+          "clientID": process.env.CLIENT_ID,
+          "audience": process.env.CLIENT_ID,
+          "authority": process.env.AUTHORITY || "login.microsoftonline.com",
+          "version": "v2.0",
+          "discovery": ".well-known/openid-configuration",
+          "scope": ["Ativare.Materiais_e_Orcamentos"],
+          "validateIssuer": true,
+          "passReqToCallback": false,
+          "loggingLevel": "info"
+        }
       }
     },
     "dbBrand": "mongodb",
