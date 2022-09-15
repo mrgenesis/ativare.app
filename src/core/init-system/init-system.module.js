@@ -49,6 +49,8 @@ class InitSystem {
       this.loadDatabase(db)
       .then(() => this.loadModels())
       .catch(err => reject(err))
+      .then(() => this.loadPermissionGroups())
+      .catch(err => reject(err))
       .then(() => this.loadRoutes())
       .catch(err => reject(err))
       .then(() => {
@@ -80,7 +82,13 @@ class InitSystem {
   loadPermissionGroups() {
     // TODO: o resultado deste item deve ser atualizado em realtime
     // para evitar ter que reiniciar o app quando o grupo for atualizado
-    return this.#context.model.group().find({});
+    return this.#context.model.group().find({}).then(groups => {
+      this.#context.groups = {};
+      groups.forEach(gp => {
+        this.#context.groups[gp.name] = gp.granteds;
+      });
+      console.warn('Lista de grupos definida no app:', this.#context.groups);
+    });
   }
 
   loadRoutes() {
