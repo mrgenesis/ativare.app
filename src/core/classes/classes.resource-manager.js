@@ -70,7 +70,7 @@ class ResourceManager {
     return middleware;    
   }
   generateApplicationResourceName(route) {    
-    const arn = `${route.name}_${route.serviceNameInArn}@${this.#module.name}_${route.type}`;
+    const arn = `${route.name}_${route.serviceName}@${this.#module.name}_${route.type}`;
     route.setApplicationResourceName(arn);
   }
 }

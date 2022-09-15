@@ -1,12 +1,12 @@
 'use strict';
 
 class ServiceFactory {
-  #data; #name; #nameType; #permissions;
-  constructor(exec, type, displayDescription, permissions = []) {
+  #data; #name; #nameType; #adicionalsResources;
+  constructor(exec, type, displayDescription, adicionalsResources = []) {
     this.#name = Object.getOwnPropertyDescriptor(exec, 'name').value
     this.#data = { displayDescription, type, exec };
     this.#nameType = `${this.#name}_${this.#data.type}`;
-    this.#permissions = this.generatePermissionsName(permissions);
+    this.#adicionalsResources = this.adicionalsResourcesValidate(adicionalsResources);
   }
   get name() {
     return this.#name;
@@ -26,14 +26,15 @@ class ServiceFactory {
   get data() {
     return this.#data
   }
-  get serviceNameInArn() {
-    return this.#name + this.#permissions;
+  get adicionalsResources() {
+    return this.#adicionalsResources;
   }
-  generatePermissionsName(permissions) {
-    if (permissions.length === 0) {
-      return '';
+  adicionalsResourcesValidate(adicionalsResources) {
+    const isIncorrectName = p => (/[^A-Za-z0-9]/).test(p);
+    if(!Array.isArray(adicionalsResources) && adicionalsResources.some(isIncorrectName)) {
+      throw new Error('adicionalsResources should be array and can have only letters and numbers');
     }
-    return `+${permissions.join('+')}`;
+    return adicionalsResources;
   }
 
 }

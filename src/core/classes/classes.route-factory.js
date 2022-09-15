@@ -13,6 +13,7 @@ class RouteFatory {
   }
   getDataAll() {
     return {
+      adicionalsResources: this.adicionalsResources,
       name: this.#name,
       method: this.#method,
       moduleLowerCaseName: this.#moduleLowerCaseName,
@@ -63,11 +64,11 @@ class RouteFatory {
   get displayDescription() {
     return this.#service.displayDescription;
   }
-  get serviceNameInArn() {
-    return this.#service.serviceNameInArn;
-  }
   get arn() {
     return this.#arn;
+  }
+  get adicionalsResources() {
+    return this.#service.adicionalsResources;
   }
   setErrorFactory(generator) {
     this.error = (next, err) => {
