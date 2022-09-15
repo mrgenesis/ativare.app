@@ -1,19 +1,8 @@
 'use strict';
 const express = require('express');
-const session = require('express-session');
-const cookieParse = require('cookie-parser');
 const morgan = require('morgan');
-
-const sessionConfig = {
-  secret: process.env.EXPRESS_SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  name: 'api.server',
-  cookie: {
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax'
-  }
-};
+const passport = require('passport');
+const BearerStrategy = require("passport-azure-ad").BearerStrategy;
 
 class ExpressApp {
   #app;
@@ -23,22 +12,40 @@ class ExpressApp {
     this.#context = context;
     this.#appConfig = appConfig;
     this.#app = express();
-    this.#app.use(cookieParse());
-    this.#app.use(session(sessionConfig));
 
     this.#app.use(morgan('combined'));
     this.#app.set('applicationResources', {});
     this.#app.use(express.json());
-    this.#app.use(express.urlencoded({ extended: false }));
+    this.#app.use(express.urlencoded({ extended: true }));
     
+    this.configureAtuh();
     
-    this.includeCredentials();
     this.activeCorsIfIsDev();
     this.setMiddlewares();
   }
-
+  
   getApp() {
     return this.#app;
+  }
+  configureAtuh() {
+    const options = this.#context.appConfig.authenticate.azuread.bearerOptions;
+    const optionsConfigured = {
+      identityMetadata: `https://${options.authority}/${options.tenantID}/${options.version}/${options.discovery}`,
+      issue: `https://${options.authority}/${options.tenantID}/${options.version}`,
+      clientID: options.clientID,
+      audience: options.audience,
+      validateIssuer: options.validateIssuer,
+      passReqToCallback: options.passReqToCallback,
+      loggingLevel: options.loggingLevel,
+      scope: options.scope
+    };
+    const bearerStrategy = new BearerStrategy(optionsConfigured, (token, done) => {
+      // Send user info using the second argument
+      const userProperty = new this.#context.Classes.UserHandler(token);
+      done(null, userProperty/* req.user */, token);
+    });
+    this.#app.use(passport.initialize());
+    passport.use(bearerStrategy);
   }
   setMiddlewares() { // TODO: definir appConfig dentro de context
     const { Middleware } = this.#context;
@@ -56,23 +63,14 @@ class ExpressApp {
   getApplicationResources(name) {
     return this.#app.get('applicationResources')[name];
   }
-  includeCredentials() {
-    this.#app.use((_, res, next) => {
-      res.setHeader('Access-Control-Allow-Credentials', true);
-      next();
-    });
-  }
   activeCorsIfIsDev() {
     if(process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
-      console.log(`>>>>>>> request origin is actived on localhost.`);
-      this.#app.use((req, res, next) => {
-        const origin = req.headers.origin
-        const allowed = /http:\/\/localhost:[\d]{4}/;
-        console.log(`>>>>>>> Dev|Test allowed.test(${origin}) <<${allowed.test(origin)}>>`);
-          if (allowed.test(origin)) {
-            res.setHeader('Access-Control-Allow-Origin', origin);
-            res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-          }
+      console.log(`>>>>>>> CORS is actived on localhost to Dev|Test environment.`);
+      return this.#app.use((req, res, next) => {
+        res.header('Access-Control-Allow-Origin', '*');
+        res.header('Access-Control-Allow-Headers', 'Authorization, Origin, X-Requested-With, Content-Type, Accept');
+        const origin = req.headers.origin;
+        console.log(`>>>>>>> Dev|Test allowed origin ${origin}`);
           return next();
       });
     }
@@ -85,12 +83,7 @@ class ExpressApp {
       res.status(err.statusCode).json(error.response());
     });
   }
-
-
-
 }
-
-
 
 ExpressApp.type = 'none';
 module.exports = ExpressApp;
