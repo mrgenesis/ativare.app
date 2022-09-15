@@ -2,7 +2,7 @@
 'use strict';
 const AppError = require('./app-error.app-error');
 const errorFormat = require('./app-error.error-format');// TODO: deprecated
-const CreatorError = require('./app-error.creator-error');
+const ErrorCreator = require('./app-error.error-creator');
 
 class ErrorHandler {
   constructor() {
@@ -29,7 +29,7 @@ class ErrorHandler {
     }
     ResourceModule.errorFormat = errorFormat;// TODO: deprecated
   }
-  static CreatorError = CreatorError;
+  static ErrorCreator = ErrorCreator;
   static formatter(err) {
     if(err.isAppError) {
       return err;
