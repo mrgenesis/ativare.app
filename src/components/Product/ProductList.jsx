@@ -6,22 +6,26 @@ import { routesConfig } from '../../constants/routesConfig';
 import { Context } from '../../store/Store';
 import { useGetApiData } from '../../hooks/useGetApiData';
 import MessageStatus from '../Utils/MessageStatus';
+import Services from '../../services/services';
+
 export default function MaterialList() {
   const [state, dispatch] = React.useContext(Context);
   const getProductList = useGetApiData({ type: 'get', endPoint: routesConfig.product.home.api, dispatch });
   const [runningApi, setRunningApi] = React.useState('stopped');
   const [response, setResponse] = React.useState([]);
+  const services = React.useMemo(() => new Services(state.authData), [state.authData]);
   React.useEffect(() => {
-    let isMounted = false;
+    // let isMounted = false;
     if (runningApi === 'stopped') {
-      getProductList({ params: {}, handleStatus: setRunningApi, getResponse: setResponse });
-    }
-    return () => {
-      // eslint-disable-next-line
-      isMounted = true;
+      services.getProducts().then(reqId => {
+        const apiRequest = services.getApiRequest(reqId);
+        setRunningApi(apiRequest.step);
+        if(Services.errorResolver({ apiRequest, dispatch })) return; // break if has error
+        setResponse(apiRequest.data);
+      });
     }
 
-  }, [runningApi, getProductList]);
+  }, [runningApi, services]);
   const columns = [
     {
       field: 'id', headerName: 'Cód', width: 90,

@@ -4,40 +4,31 @@ import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
 import { useForm } from 'react-hook-form';
 
 import MessageStatus from '../Utils/MessageStatus';
-
-import { useGetApiData } from '../../hooks/useGetApiData';
 import { productModel } from '../../config';
 import { Context } from '../../store/Store';
+import materialsListFormatter from './materials-list-formatter';
+import Services from '../../services/services';
 
 export default function MaterialNew({ item, setItem }) {
   const [state, dispatch] = React.useContext(Context);
-  const getApiData = useGetApiData({ type: 'post', endPoint: '/product/edit', dispatch });
   // Ferramente de validação
   const { register, handleSubmit, errors } = useForm();
 
   // Dados que serão salvos no Banco de dados
   const [name, setName] = React.useState(item['name']);
   const [description, setDescription] = React.useState(item['description']);
-  const [materials, setMaterials] = React.useState('');
 
   //possibles values: stopped, running, done
   const [runningApi, setRunningApi] = React.useState('stopped');
-
+  const services = new Services(state.authData);
   async function onSubmit(event) {
-    getApiData({
-      getResponse: setItem,
-      handleStatus: setRunningApi,
-      params: {
-        name, description, code: item['code']
-      }
+    services.updateProduct({ updatedProduct: { name, description, code: item['code'] } }).then(reqId => {
+      const apiRequest = services.getApiRequest(reqId);
+      setRunningApi(apiRequest.step);
+      if(Services.errorResolver({ apiRequest, dispatch })) return; // break if has error
+      setItem(apiRequest.data);
     });
   }
-  let txt = ''; 
-  item.materials.map((mat, i) => txt += `(${mat.code}) ${mat.name} / Limite: ${mat.charge}\n`);
-
-  React.useEffect(() => {
-    setMaterials(txt);
-  }, [txt]);
   return (
     <>
       <MessageStatus
@@ -92,7 +83,7 @@ export default function MaterialNew({ item, setItem }) {
             multiline
             rows={item.materials.length + 1}
             label='Materiais adicionados'
-            type='text' margin='normal' value={materials}
+            type='text' margin='normal' value={materialsListFormatter(item.materials)}
             helperText='Não pode ser modificado'
           />
 

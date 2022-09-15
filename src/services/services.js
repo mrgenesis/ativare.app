@@ -42,7 +42,8 @@ export default class Services extends Auth {
       data: null,
       error: null,
       expectedResponse: null,
-      retry: true
+      retry: true,
+      response: { text: () => Promise.resolve(`Houve alguma falha de comunicação. Não houve reposta da API.`) }
     }
     this.reqs[req.id] = req;
     return req.id;
@@ -110,5 +111,20 @@ export default class Services extends Auth {
   updateMaterial({ id = this.createApiRequest('updateMaterial', 'atualizar um mateiral através do código'), updatedMaterial } = {}) {
     this.addHeaders("Content-Type", "application/json");
     return this.resolver({ expectedCode: 200, id, path: `/material/edit`, method: 'post', body: updatedMaterial });
+  }  
+  getProducts({ id = this.createApiRequest('getProducts', 'obter uma lista de produtos') } = {}) {
+    return this.resolver({ expectedCode: 200, id, method: 'get', path: '/product' });
+  }
+  
+  addProduct({ id = this.createApiRequest('addProduct', 'cadastrar um novo produto'), product } = {}) {
+    this.addHeaders("Content-Type", "application/json");
+    return this.resolver({ expectedCode: 201, id, path: `/product/new`, method: 'post', body: product });
+  } 
+  getProductByCode({ code, id = this.createApiRequest('getProductByCode', 'obter um produto através do código') } = {}) {
+    return this.resolver({ expectedCode: 200, id, method: 'get', path: `/product/${code}` });
+  }
+  updateProduct({ id = this.createApiRequest('updateProduct', 'atualizar um mateiral através do código'), updatedProduct } = {}) {
+    this.addHeaders("Content-Type", "application/json");
+    return this.resolver({ expectedCode: 200, id, path: `/product/edit`, method: 'post', body: updatedProduct });
   }
 }

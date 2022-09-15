@@ -1,32 +1,32 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import IndividualItem from '../Utils/IndividualItem';
+import ProductPage from './ProductPage';
 import Loader from '../Utils/Loader';
 
-import instance from '../../services/api';
+import { Context } from '../../store/Store';
+import Services from '../../services/services';
 
 
 export default function MaterialItem() {
   let { productId } = useParams();
-  const [isLoaded, setIsLoaded] = React.useState(false);
-  const [finished, setFinished] = React.useState(false);
+  const [state, dispatch] = React.useContext(Context);
   const [response, setResponse] = React.useState({});
-  
+  const [runningApi, setRunningApi] = React.useState('stopped');
+  const services = React.useMemo(() => new Services(state.authData), [state.authData]);
+
   React.useEffect(() => {
-    let materialsTxt = '';
-    if (!isLoaded) {
-      setIsLoaded(true);
-      instance.get(`/product/${productId}`)
-      .then(res => {
-        res.data.materials.map(material => {
-          return materialsTxt += `- (${material.code}) ${material.name}, Limite: ${material.charge} \n`;
-        });
-        setResponse({ ...res.data, materialsTxt });
-        setFinished(true);
+    // let isMounted = false;
+    if (runningApi === 'stopped') {
+      services.getProductByCode({ code: productId }).then(reqId => {
+        const apiRequest = services.getApiRequest(reqId);
+        setRunningApi(apiRequest.step);
+        if(Services.errorResolver({ apiRequest, dispatch })) return; // break if has error
+        setResponse(apiRequest.data);
       });
     }
-  }, [isLoaded, productId]);
+  }, [runningApi, services, setRunningApi, dispatch, productId]);
+  
   return (
-    finished ? <IndividualItem response={response} type='product' /> : <Loader />
+    runningApi === 'done' ? <ProductPage response={response} setResponse={setResponse} /> : <Loader />
   );
 }

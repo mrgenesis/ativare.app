@@ -9,6 +9,7 @@ import AddMAterials from './AddMaterials';
 import { productModel } from '../../config';
 import UtilsMessageStatus from '../Utils/MessageStatus';
 import UtilsHidden from './../Utils/Hidden';
+import Services from '../../services/services';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -48,11 +49,20 @@ export default function New({ submit }) {
   const [colorMaterialText, setColorMaterialText] = React.useState('textPrimary');
   const [getNewMaterialAdded, setGetNewMaterialAdded] = React.useState({});
   const [, setResponse] = React.useState({});
+
+  // Buscar uma lista de materiais
+  const services = React.useMemo(() => new Services(state.authData), [state.authData]);
   React.useEffect(() => {
     if (runningApiGetMaterials === 'stopped') {
-      getMaterials({ params: {}, getResponse: setMaterialsList, handleStatus: setRunningApiGetMaterials });
+      services.getMaterials().then(reqId => {
+        const apiRequest = services.getApiRequest(reqId);
+        setRunningApiGetMaterials(apiRequest.step);
+        if(Services.errorResolver({ apiRequest, dispatch })) return; // break if has error
+        setMaterialsList(apiRequest.data);
+      });
+      // getMaterials({ params: {}, getResponse: setMaterialsList, handleStatus: setRunningApiGetMaterials });
     }
-  }, [runningApiGetMaterials, getMaterials]);
+  }, [runningApiGetMaterials, getMaterials, services, dispatch]);
 
   React.useEffect(() => {
     if (getNewMaterialAdded.code && getNewMaterialAdded._id && getNewMaterialAdded.name && getNewMaterialAdded.charge) {
@@ -65,7 +75,13 @@ export default function New({ submit }) {
     // TODO: integrar o campo "materials" ao react-hook-form
     data[productModel.materials.key] = addedMaterials;
     if (data[productModel.materials.key].length > 0) {
-      saveNewProduct({ params: data, getResponse: setResponse, handleStatus: setRunningApiSaveProduct });
+      services.addProduct({ product: data }).then(reqId => {
+        const apiRequest = services.getApiRequest(reqId);
+        setRunningApiSaveProduct(apiRequest.step);
+        if(Services.errorResolver({ apiRequest, dispatch })) return; // break if has error
+        setResponse(apiRequest.data);
+      });
+      // saveNewProduct({ params: data, getResponse: setResponse, handleStatus: setRunningApiSaveProduct });
     }
     else {
       setColorMaterialText('error');
