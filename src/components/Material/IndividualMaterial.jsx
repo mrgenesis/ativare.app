@@ -1,22 +1,31 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import IndividualItem from '../Utils/IndividualItem';
-import { useGetApiData } from '../../hooks/useGetApiData';
+import MaterialPage from './MaterialPage';
 import Loader from '../Utils/Loader';
 
 import { Context } from '../../store/Store';
+import Services from '../../services/services';
 
 export default function MaterialItem() {
-  const [, dispatch] = React.useContext(Context);
+  const [state, dispatch] = React.useContext(Context);
   let { materialId } = useParams();
-  const getMaterial = useGetApiData({ type: 'get', endPoint: `/material/${materialId}`, dispatch });
   const [runningApi, setRunningApi] = React.useState('stopped');
   const [response, setResponse] = React.useState({});
+
+  const services = React.useMemo(() => new Services(state.authData), [state.authData]);
   React.useEffect(() => {
-    if (runningApi === 'stopped')
-      getMaterial({ params: {}, handleStatus: setRunningApi, getResponse: setResponse });
-  }, [runningApi, response, getMaterial]);
+    if (runningApi === 'stopped') {
+      services.getMaterialByCode({ code: materialId }).then(reqId => {
+        const apiRequest = services.getApiRequest(reqId);
+        setRunningApi(apiRequest.step);
+        if(Services.errorResolver({ dispatch, apiRequest })) {
+          return;
+        }
+        setResponse(apiRequest.data);
+      });
+    }
+  }, [runningApi, response, services, dispatch, materialId]);
   return (
-    (runningApi === 'done') ? <IndividualItem response={response} type='material' /> : <Loader />
+    (runningApi === 'done') ? <MaterialPage response={response} setResponse={setResponse} /> : <Loader />
   );
 }

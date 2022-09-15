@@ -4,16 +4,12 @@ import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
 import { useForm } from 'react-hook-form';
 
 import MessageStatus from '../Utils/MessageStatus';
-
-import { useGetApiData } from '../../hooks/useGetApiData';
 import { materialModel } from '../../config';
 import { Context } from '../../store/Store';
-
-
+import Services from '../../services/services';
 
 export default function MaterialNew({ item, setItem }) {
   const [state, dispatch] = React.useContext(Context);
-  const getApiData = useGetApiData({ type: 'post', endPoint: '/material/edit', dispatch });
   // Ferramente de validação
   const { register, handleSubmit, errors } = useForm();
 
@@ -25,13 +21,17 @@ export default function MaterialNew({ item, setItem }) {
   //possibles values: stopped, running, done
   const [runningApi, setRunningApi] = React.useState('stopped');
 
-  async function onSubmit(event) {
-    getApiData({
-      getResponse: setItem,
-      handleStatus: setRunningApi,
-      params: {
-        name, limit, unitPrice: parseInt(unitPrice, 10), ms, code: item['code']
+
+  async function onSubmit() {
+    const services = new Services(state.authData);
+    services.updateMaterial({ updatedMaterial: { name, limit, unitPrice: parseInt(unitPrice, 10), ms, code: item['code'] }})
+    .then(reqId => {
+      const apiRequest = services.getApiRequest(reqId);
+      setRunningApi(apiRequest.step)
+      if(Services.errorResolver({ dispatch, apiRequest })) {
+        return;
       }
+      setItem(apiRequest.data);
     });
   }
 

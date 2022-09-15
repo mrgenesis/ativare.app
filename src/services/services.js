@@ -100,4 +100,15 @@ export default class Services extends Auth {
   getBudgets({ id = this.createApiRequest('getBudgets', 'obter uma lista de orçamentos') } = {}) {
     return this.resolver({ expectedCode: 200, id, method: 'get', path: '/budget' });
   }
+  addNewMaterial({ id = this.createApiRequest('addNewMaterial', 'cadastrar um novo material'), material } = {}) {
+    this.addHeaders("Content-Type", "application/json");
+    return this.resolver({ expectedCode: 201, id, path: '/material/new', method: 'post', body: material });
+  }
+  getMaterialByCode({ code, id = this.createApiRequest('getMaterialByCode', 'obter um mateiral através do código') } = {}) {
+    return this.resolver({ expectedCode: 200, id, method: 'get', path: `/material/${code}` });
+  }
+  updateMaterial({ id = this.createApiRequest('updateMaterial', 'atualizar um mateiral através do código'), updatedMaterial } = {}) {
+    this.addHeaders("Content-Type", "application/json");
+    return this.resolver({ expectedCode: 200, id, path: `/material/edit`, method: 'post', body: updatedMaterial });
+  }
 }

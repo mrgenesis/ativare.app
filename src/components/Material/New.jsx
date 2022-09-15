@@ -4,17 +4,15 @@ import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
 import { useForm } from 'react-hook-form';
 
 import { Context } from '../../store/Store';
-import { useGetApiData } from '../../hooks/useGetApiData';
-
 import MessageStatus from '../Utils/MessageStatus';
-
 import { materialModel } from '../../config';
+import Services from '../../services/services';
 
 export default function MaterialNew() {
   const [state, dispatch] = React.useContext(Context);
-  const saveNewMaterial = useGetApiData({ type: 'post', endPoint: '/material/new', dispatch });
-  // Ferramente de validação
   const { register, handleSubmit, errors } = useForm();
+
+  const services = new Services(state.authData);
 
   // Dados que serão salvos no Banco de dados
   const [name, setName] = React.useState('');
@@ -22,15 +20,16 @@ export default function MaterialNew() {
   const [ms, setMs] = React.useState(0);
   const [limit, setLimit] = React.useState();
 
-  // Configuração do funcionamento da página
   const [runningApi, setRunningApi] = React.useState('stopped');
 
-  // Configuração da página
-  function onSubmit(event) {
-    saveNewMaterial({
-      params: {
-        name, unitPrice: parseInt(unitPrice, 10), ms, limit
-      }, getResponse: () => { }, handleStatus: setRunningApi
+  function onSubmit() {
+    services.addNewMaterial({ material: { name, unitPrice: parseInt(unitPrice, 10), ms, limit } })
+    .then(reqId => {
+      const apiRequest = services.getApiRequest(reqId);
+      setRunningApi(apiRequest.step);
+      if(Services.errorResolver({ dispatch, apiRequest })) {
+        return;
+      }      
     });
   }
 
@@ -41,7 +40,7 @@ export default function MaterialNew() {
         loading={(runningApi === 'running')}
         severity={state.error ? 'error' : 'sucees'}
         message={state.message}
-        dataLink={(state.error) ? null : { to: '/usuario/novo', text: <Button onClick={() => window.location.reload()}>Cadastre um novo material</Button> }}
+        dataLink={(state.error) ? null : { to: '/material /novo', text: <Button onClick={() => window.location.reload()}>Cadastre um novo material</Button> }}
       />
       <Box display='flex' flexDirection='column' justifyContent='center'>
         <form onSubmit={handleSubmit(onSubmit)}>
