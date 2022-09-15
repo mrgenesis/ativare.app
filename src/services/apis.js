@@ -9,6 +9,9 @@ export class Apis {
     this.#options.headers.delete('Authorization');
     this.#options.headers.append('Authorization', `${type} ${token}`);
   }
+  addHeaders(k, v) {
+    this.#options.headers.append(k, v);
+  }
   get path() { return this.#path; }
   get urlBase() { return this.#urlBase; }
   set path(path) { this.#path = this.removeSlash(path); }
@@ -31,7 +34,6 @@ export class Apis {
       return JSON.stringify(body);
     } catch (e) {
       console.warn('secureStringifyOfBody', e);
-      return '{"secureStringifyOfBody": "Error"}';
     }
   }
   endpoint(path) {
@@ -44,6 +46,7 @@ export class Apis {
     const mergedOptions = { ...this.#options, ...options };
     path = this.removeSlash(path);
     return new Promise((resolve, reject) => {
+      mergedOptions.body = this.secureStringifyOfBody(mergedOptions.body);
       window.fetch(this.endpoint(path), mergedOptions)
       .then(resolve)
       .catch(reject);
