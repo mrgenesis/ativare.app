@@ -6,6 +6,7 @@ export class Apis {
     headers: new Headers()
   };
   setAuthHeaders(token, type = 'Bearer') {
+    this.#options.headers.delete('Authorization');
     this.#options.headers.append('Authorization', `${type} ${token}`);
   }
   get path() { return this.#path; }
@@ -39,7 +40,7 @@ export class Apis {
   set method(method) {
     this.#options.method = method;
   }
-  request(path = this.#path, options = {}) {console.log('path',path,'options',options)
+  request(path = this.#path, options = {}) {
     const mergedOptions = { ...this.#options, ...options };
     path = this.removeSlash(path);
     return new Promise((resolve, reject) => {
