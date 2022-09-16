@@ -12,6 +12,9 @@ class UserHendler {
   get role() {
     return this.#token.roles[0];
   }
+  get adicionalsResources() {
+    return [ ...this.#adicionalsResources ];
+  }
   isId(id) {
     return id === this.id;
   }
