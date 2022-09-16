@@ -31,8 +31,11 @@ class ServiceFactory {
   }
   adicionalsResourcesValidate(adicionalsResources) {
     const isIncorrectName = p => (/[^A-Za-z0-9]/).test(p);
-    if(!Array.isArray(adicionalsResources) && adicionalsResources.some(isIncorrectName)) {
-      throw new Error('adicionalsResources should be array and can have only letters and numbers');
+    if(!Array.isArray(adicionalsResources)) {
+      throw new Error('adicionalsResources should be a array');
+    }
+    if(adicionalsResources.some(isIncorrectName)) {
+      throw new Error('adicionalsResources should have only letters and numbers');
     }
     return adicionalsResources;
   }
