@@ -1,43 +1,17 @@
 'use strict';
 
-class Budget {
-  constructor(productsList) {
-    this.productsList = productsList;
-    this.items = {};
-  }
-  generateItems() {
-    this.productsList.forEach(item => {
-      debugger;
-      this.addPropertyIfHaveNot(this.items, item.floor, { [item.homeLocationName]: { config: item.configLocation, products: [] } });
-      this.addPropertyIfHaveNot(this.items[item.floor], item.homeLocationName, {  config: item.configLocation, products: [] });
-      this.items[item.floor][item.homeLocationName].products.push(item);
-    });
-  }
-  getItems() {
-    return this.items;
-  }
-  addPropertyIfHaveNot(obj, property, initialValue) {
-    if (obj.hasOwnProperty(property)) {
-      return true;
-    }
-    obj[property] = initialValue;
-    return false;
-  }
-}
-
 function setContextToTtMiddleware(context) {
   return function create(src) {
-    
     return function create(req, _, next) {
-      const { productsList, own, customer } = req.body;
-      const budget = new Budget(productsList);
-
-      budget.generateItems();
-      const items = budget.getItems();
-      req.userAuth.addData({ propertyName: 'budget', value: { items, own, customer }});
-      next();
-    }
-    
+      try {
+        if (req.user.isGranted(src, context.groups)) {
+          return next();
+        }
+        throw new context.AppError.ErrorCreator('O usuário não possui acesso a esse recurso. Fale com o administrador.', 403);
+      } catch(err) {
+        src.error(next, err);
+      }
+    }    
   }
 }
 module.exports = setContextToTtMiddleware;

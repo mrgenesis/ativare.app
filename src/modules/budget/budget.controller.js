@@ -6,7 +6,7 @@ module.exports = function budgetController(resources) {
 
   router[create_w.method](create_w.relativePath, create_w.middlewares, async (req, res, next) => {
     try { 
-      const newBudgetId = await create_w.service(req.userAuth.getProperty('budget'));
+      const newBudgetId = await create_w.service(req.body, req.authInfo);
       res.status(201).json({ _id: newBudgetId });
     } catch(err) {
       create_w.error(next, err);
@@ -14,8 +14,8 @@ module.exports = function budgetController(resources) {
   });
   
   router[_r.method](_r.relativePath, _r.middlewares, async (req, res, next) => {
-    const newBudgetId = await _r.service({}, req.userAuth);
     try {
+      const newBudgetId = await _r.service({}, req.user);
       res.status(200).json(newBudgetId);
     } catch(err) {
       _r.error(next, err);
@@ -24,7 +24,7 @@ module.exports = function budgetController(resources) {
   router[budgetId_r.method](budgetId_r.relativePath, budgetId_r.middlewares, async (req, res, next) => {
     try {
       const { budgetId: budgetCode } = req.params;
-      const budget = await budgetId_r.service(budgetCode, req.userAuth);
+      const budget = await budgetId_r.service(budgetCode, req.user);
       res.status(200).json({...budget});
     } catch(err) {
       budgetId_r.error(next, err);

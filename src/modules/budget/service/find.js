@@ -4,18 +4,15 @@ function getModelAndContextToCreateService(context) {
   const { ServiceFactory } = context.Classes;
   const { budget } = context.model;
 
-  function find(newBudget, userAuth) {
-    const promBudgetList = budget.find(newBudget);
-    const permissions = userAuth.getProperty('allowed');
-
-    return promBudgetList.then(budgetList => {
+  function find(criteries, userHandler) {
+    return budget.find(criteries).then(budgetList => {
       if (budgetList.lenght === 0) {
         return [];
       }
-      if(permissions.seeAll === true) {
+      if(userHandler.isGrantedResource('seeAll')) {
         return budgetList;
       }
-      return budgetList.filter(b => b.own.code === userAuth.userData.code);
+      return budgetList.filter(b => b.own.code === userHandler.id);
     });
   }
 
