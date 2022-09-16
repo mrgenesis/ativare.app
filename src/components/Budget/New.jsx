@@ -3,18 +3,17 @@ import React from "react";
 import GetBudgetProductsList from './NewBudget/GetBudgetProductsList';
 import MessageStatus from '../Utils/MessageStatus';
 
-import { useGetApiData } from '../../hooks/useGetApiData';
 import { Context } from '../../store/Store';
-
+import Services from '../../services/services';
 import GetCustomerData from './NewBudget/GetCustomerData';
 
 export default function New() {
   const [state, dispatch] = React.useContext(Context);
-  const getApiData = useGetApiData({ type: 'post', endPoint: '/budget/create', dispatch });
   const [runningApi, setRunningApi] = React.useState('stopped');
   const [response, setResponse] = React.useState('');
   const [dataLink, setDataLink] = React.useState(null);
-  const [collectedData, setCollectedData] = React.useState({ own: JSON.parse(localStorage.getItem('user')) })
+  
+  const [collectedData, setCollectedData] = React.useState({})
     , [stage, setStage] = React.useState(0)
     , next = () => setStage(stage + 1)
     , componentes = [
@@ -37,9 +36,15 @@ export default function New() {
       });
     }
     if (stage === 2 && runningApi === 'stopped') {
-      getApiData({ params: collectedData, getResponse: setResponse, handleStatus: setRunningApi });
+      const services = new Services(state.authData);
+      services.createBudget({ newBudget: collectedData }).then(reqId => {
+        const apiRequest = services.getApiRequest(reqId);
+        setRunningApi(apiRequest.step);
+        if(Services.errorResolver({ apiRequest, dispatch })) return; // break if has error
+        setResponse(apiRequest.data);
+      });
     }
-  }, [collectedData, stage, runningApi, response, dataLink, getApiData]);
+  }, [collectedData, stage, runningApi, response, dataLink, setResponse, dispatch, state.authData]);
 
   function getData(data) {
     setCollectedData({ ...collectedData, ...data });

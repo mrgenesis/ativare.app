@@ -92,8 +92,12 @@ export default class Services extends Auth {
     });
   }
 
-  createBudget({ body, id = this.createApiRequest('createBudget', 'criar um novo orçamento') } = {}) {
-    return this.resolver({ expectedCode: 201, body, id, method: 'post', path: '/budget/create' });
+  createBudget({ newBudget, id = this.createApiRequest('createBudget', 'criar um novo orçamento') } = {}) {
+    this.addHeaders("Content-Type", "application/json");
+    return this.resolver({ expectedCode: 201, body: newBudget, id, method: 'post', path: '/budget/create' });
+  }
+  getBudgetByCode({ code, id = this.createApiRequest('getBudgetByCode', 'obter um mateiral através do código') } = {}) {
+    return this.resolver({ expectedCode: 200, id, method: 'get', path: `/budget/${code}` });
   }
   getMaterials({ id = this.createApiRequest('getMaterials', 'obter uma lista de materiais') } = {}) {
     return this.resolver({ expectedCode: 200, id, method: 'get', path: '/material' });

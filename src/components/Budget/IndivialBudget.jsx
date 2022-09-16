@@ -4,7 +4,6 @@ import List from '@material-ui/core/List';
 import Button from '@material-ui/core/Button';
 import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
 import { Context } from '../../store/Store';
-import { useGetApiData } from '../../hooks/useGetApiData';
 
 import BudgetItems from './BudgetParts/BudgetItems';
 import BudgetTotal from './BudgetParts/BudgetTotal';
@@ -14,25 +13,30 @@ import BudgetPartsHeader from './BudgetParts/Header';
 import BudgetPartsPrivateDetail from './BudgetParts/PrivateDetail';
 import Hidden from '../Utils/Hidden';
 import Loader from '../Utils/Loader';
+import Services from '../../services/services';
 
 // Componente exibe a lista dos item do orçamento
 export default function IndivialBudget() {
   let { budgetId } = useParams();
   const [state, dispatch] = React.useContext(Context);
   const [runningApi, setRunningApi] = React.useState('stopped');
-  const [budget, setBudget] = React.useState({});
+  const [budget, setBudget] = React.useState(null);
   const [displayDetail, setDisplayDetail] = React.useState(false);
-
-  const getData = useGetApiData({ type: 'get', endPoint: `/budget/${budgetId}`, dispatch });
+  const services = React.useMemo(() => new Services(state.authData), [state.authData]);
   
   React.useEffect(() => {
     if (runningApi === 'stopped') {
-      getData({ params: {}, getResponse: setBudget, handleStatus: setRunningApi });
+      services.getBudgetByCode({ code: budgetId }).then(reqId => {
+        const apiRequest = services.getApiRequest(reqId);
+        setRunningApi(apiRequest.step);
+        if(Services.errorResolver({ apiRequest, dispatch })) return; // break if has error
+        setBudget(apiRequest.data);
+      });
     }
-  }, [runningApi, getData, budgetId]);
+  }, [runningApi, setRunningApi, budgetId, services, setBudget, dispatch]);
 
   function LoadingLast() {
-    if (runningApi === 'done' && !state.error) {
+    if (budget && runningApi === 'done' && !state.error) {
       return (
         <>
           <BudgetPartsHeader createAt={budget.createAt} code={budget.code} customer={budget.customer} />
