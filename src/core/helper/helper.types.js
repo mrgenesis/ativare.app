@@ -60,6 +60,9 @@ function types() {
     isNotString(v) {
       return typeof v !== 'string';
     }
+    isNotTrue(v) {
+      return v !== true;
+    }
 
     isUndefined(undefinedVelue) {
       return typeof undefinedVelue === 'undefined';
@@ -77,6 +80,9 @@ function types() {
     }
     isFalse(v) {
       return v === false;
+    }
+    isFalseValue(v) {
+      return !v;
     }
     
   }
