@@ -19,7 +19,7 @@ export default class Services extends Auth {
     if (apiRequest.data) {
       try {
         apiRequest.data = JSON.parse(apiRequest.data);
-        msg += `${(msg === '') ? '' : ' &'} ErrorId: ${apiRequest.data.errorId} - ${apiRequest.data.message}`;
+        msg += `${(msg === '') ? '' : ' &'} ${apiRequest.data.message} ARN: "${apiRequest.data.arn}", Id: ${apiRequest.data.errorId}`;
         dispatch({ type: 'ERROR_REQUEST', payload: { message: msg } });
       } catch(e) {
         console.error(apiRequest.data, e);
@@ -82,6 +82,7 @@ export default class Services extends Auth {
           console.warn('A resposta da API foi com status 401. Vou tentar renovar o token e tentar mais uma vez...');
           this.reqs[id].retry = false;
           return this.acquireToken().then(() => {
+            console.warn('O token foi renovado. Refazendo a requisição.');
             return this.resolver({ expectedCode, id, path, method, body, dataConverter, previousResolver: resolve });
           })
         }
@@ -114,7 +115,7 @@ export default class Services extends Auth {
   }
   updateMaterial({ id = this.createApiRequest('updateMaterial', 'atualizar um mateiral através do código'), updatedMaterial } = {}) {
     this.addHeaders("Content-Type", "application/json");
-    return this.resolver({ expectedCode: 200, id, path: `/material/edit`, method: 'post', body: updatedMaterial });
+    return this.resolver({ expectedCode: 200, id, path: `/material/edit`, method: 'put', body: updatedMaterial });
   }  
   getProducts({ id = this.createApiRequest('getProducts', 'obter uma lista de produtos') } = {}) {
     return this.resolver({ expectedCode: 200, id, method: 'get', path: '/product' });
@@ -129,6 +130,6 @@ export default class Services extends Auth {
   }
   updateProduct({ id = this.createApiRequest('updateProduct', 'atualizar um mateiral através do código'), updatedProduct } = {}) {
     this.addHeaders("Content-Type", "application/json");
-    return this.resolver({ expectedCode: 200, id, path: `/product/edit`, method: 'post', body: updatedProduct });
+    return this.resolver({ expectedCode: 200, id, path: `/product/edit`, method: 'put', body: updatedProduct });
   }
 }
