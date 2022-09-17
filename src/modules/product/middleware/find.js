@@ -1,8 +1,8 @@
 'use strict';
 
 function setContext(context) {
-  return function create(src) {
-    return function create(req, _, next) {
+  return function find(src) {
+    return function find(req, _, next) {
       try {
         if (req.user.isGranted(src, context.groups)) {
           return next();

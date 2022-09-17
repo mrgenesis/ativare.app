@@ -5,10 +5,10 @@ function productRoute(context) {
 
   return [
     new RouteFactory('new', 'post', ['create'], 'create'),
-    new RouteFactory('', 'get', [], 'find'),
-    new RouteFactory('automation', 'get', [], 'find'),
-    new RouteFactory('edit', 'put', [], 'update'),
-    new RouteFactory(':productId', 'get', [], 'findOne'),
+    new RouteFactory('', 'get', ['find'], 'find'),
+    new RouteFactory('automation', 'get', ['find'], 'find'),
+    new RouteFactory('edit', 'put', ['update'], 'update'),
+    new RouteFactory(':productId', 'get', ['findOne'], 'findOne'),
   ];
 
 }
