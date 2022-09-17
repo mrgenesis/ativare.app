@@ -17,7 +17,7 @@ class Middleware {
       const middleware = require(`./${file}`)(this.#context);
       const loader = {
         global: () => this.#globalMiddlewares[middleware.name] = middleware,
-        allModules: () => this.#allModules.push(middleware),
+        allModules: () => this.setAllModuleMiddleware(middleware),
         module: () => this.#moduleMiddlewares[middleware.name] = middleware
       };
       if(Types.isNotFunction(loader[middleware.type])) {
@@ -30,7 +30,18 @@ class Middleware {
   getGlobalMiddlewares() {
     return Object.values(this.#globalMiddlewares);
   }
-
+  setAllModuleMiddleware(newMiddleware) {
+    this.#allModules = this.setOrderedMiddleware(this.#allModules, newMiddleware);
+  }
+  setOrderedMiddleware(curruntList, newMiddleware) {
+    if(this.#context.Helper.types().isUndefined(newMiddleware.priority) || newMiddleware.priority === 1) {
+      newMiddleware.priority = 1;
+      curruntList.unshift(newMiddleware);
+      return curruntList;
+    }
+    curruntList.push(newMiddleware);
+    return curruntList.sort((a, b) => a.priority - b.priority);
+  }
   getModuleMiddleware(middlewareName) {
     return this.#moduleMiddlewares[middlewareName];
   }
