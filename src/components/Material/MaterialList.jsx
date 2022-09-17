@@ -14,14 +14,17 @@ export default React.memo(function MaterialList() {
   const [runningApi, setRunningApi] = React.useState('stopped');
   const [response, setResponse] = React.useState([]);
 
-  const endpoints = new Services(state.authData);
   React.useEffect(() => {
-    endpoints.getMaterials().then(reqId => {
-      const apiRequest = endpoints.getApiRequest(reqId);
-      setRunningApi(apiRequest.step);
-      setResponse(apiRequest.data);
-    });
-  }, []);
+    if(runningApi === 'stopped') {
+      const services = new Services(state.authData);
+      services.getMaterials().then(reqId => {
+        const apiRequest = services.getApiRequest(reqId);
+        setRunningApi(apiRequest.step);
+        if(Services.errorResolver({ dispatch, apiRequest })) return;
+        setResponse(apiRequest.data);
+      });
+    }
+  }, [runningApi, state.authData, setResponse, dispatch]);
 
   const columns = [
     {

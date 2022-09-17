@@ -3,7 +3,6 @@ import { makeStyles, TextField, Button, Box, Select, MenuItem, InputLabel, FormC
 import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
 import { useForm, Controller } from 'react-hook-form';
 import { Context } from '../../store/Store';
-import { useGetApiData } from '../../hooks/useGetApiData';
 import AddMAterials from './AddMaterials';
 
 import { productModel } from '../../config';
@@ -31,8 +30,6 @@ const useStyles = makeStyles((theme) => ({
 export default function New({ submit }) {
   const classes = useStyles();
   const [state, dispatch] = React.useContext(Context);
-  const getMaterials = useGetApiData({ type: 'get', endPoint: '/material', dispatch });
-  const saveNewProduct = useGetApiData({ type: 'post', endPoint: '/product/new', dispatch });
 
   // Ferramenta de manipulação dos dados do form
   const { handleSubmit, control, register, errors } = useForm();
@@ -60,9 +57,8 @@ export default function New({ submit }) {
         if(Services.errorResolver({ apiRequest, dispatch })) return; // break if has error
         setMaterialsList(apiRequest.data);
       });
-      // getMaterials({ params: {}, getResponse: setMaterialsList, handleStatus: setRunningApiGetMaterials });
     }
-  }, [runningApiGetMaterials, getMaterials, services, dispatch]);
+  }, [runningApiGetMaterials, services, dispatch]);
 
   React.useEffect(() => {
     if (getNewMaterialAdded.code && getNewMaterialAdded._id && getNewMaterialAdded.name && getNewMaterialAdded.charge) {
@@ -81,7 +77,6 @@ export default function New({ submit }) {
         if(Services.errorResolver({ apiRequest, dispatch })) return; // break if has error
         setResponse(apiRequest.data);
       });
-      // saveNewProduct({ params: data, getResponse: setResponse, handleStatus: setRunningApiSaveProduct });
     }
     else {
       setColorMaterialText('error');

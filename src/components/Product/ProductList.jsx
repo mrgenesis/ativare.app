@@ -4,19 +4,17 @@ import Loader from '../Utils/Loader';
 import UtilsList from '../Utils/List';
 import { routesConfig } from '../../constants/routesConfig';
 import { Context } from '../../store/Store';
-import { useGetApiData } from '../../hooks/useGetApiData';
 import MessageStatus from '../Utils/MessageStatus';
 import Services from '../../services/services';
 
 export default function MaterialList() {
   const [state, dispatch] = React.useContext(Context);
-  const getProductList = useGetApiData({ type: 'get', endPoint: routesConfig.product.home.api, dispatch });
   const [runningApi, setRunningApi] = React.useState('stopped');
   const [response, setResponse] = React.useState([]);
-  const services = React.useMemo(() => new Services(state.authData), [state.authData]);
   React.useEffect(() => {
     // let isMounted = false;
     if (runningApi === 'stopped') {
+      const services = new Services(state.authData);
       services.getProducts().then(reqId => {
         const apiRequest = services.getApiRequest(reqId);
         setRunningApi(apiRequest.step);
@@ -24,8 +22,7 @@ export default function MaterialList() {
         setResponse(apiRequest.data);
       });
     }
-
-  }, [runningApi, services]);
+  }, [runningApi, state.authData, setRunningApi, setResponse, dispatch]);
   const columns = [
     {
       field: 'id', headerName: 'Cód', width: 90,
