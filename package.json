@@ -4,8 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "dev": "nodemon ./bin/www",
-    "test": "jest src/modules/user --forceExit --watchAll --verbose"
+    "dev": "nodemon ./bin/www"
   },
   "dependencies": {
     "@azure/msal-node": "^1.12.1",
