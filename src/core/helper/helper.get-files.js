@@ -13,7 +13,7 @@ function getFiles(folderPath) {
   const ComparatorModule = Helper.comparator();
   const result = { list: [], requireds: {}, names: [], resultOfRunAll: {}, withPathList: [] };
   
-  result.list = fs.readdirSync(folderPath);
+  result.list = fs.existsSync(folderPath) ? fs.readdirSync(folderPath) : [];
   
   return {
     list() {
