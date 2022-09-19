@@ -10,7 +10,7 @@ import GetCustomerData from './NewBudget/GetCustomerData';
 export default function New() {
   const [state, dispatch] = React.useContext(Context);
   const [runningApi, setRunningApi] = React.useState('stopped');
-  const [response, setResponse] = React.useState('');
+  const [response, setResponse] = React.useState(null);
   const [dataLink, setDataLink] = React.useState(null);
   
   const [collectedData, setCollectedData] = React.useState({})
@@ -27,23 +27,22 @@ export default function New() {
         dataLink={dataLink}
       />
     ];
-
-  React.useEffect(() => {
-    if (runningApi === 'done' && !dataLink) {
-      setDataLink({
-        to: `/orcamento/${response._id}`,
-        text: 'Ver orçamento'
-      });
-    }
-    if (stage === 2 && runningApi === 'stopped') {
-      const services = new Services(state.authData);
-      services.createBudget({ newBudget: collectedData }).then(reqId => {
-        const apiRequest = services.getApiRequest(reqId);
-        setRunningApi(apiRequest.step);
-        if(Services.errorResolver({ apiRequest, dispatch })) return; // break if has error
-        setResponse(apiRequest.data);
-      });
-    }
+    React.useEffect(() => {
+      if (response && !dataLink) {
+        setDataLink({
+          to: `/orcamento/${response._id}`,
+          text: 'Ver orçamento'
+        });
+      }
+      if (stage === 2 && runningApi === 'stopped') {
+        const services = new Services(state.authData);
+        services.createBudget({ newBudget: collectedData }).then(reqId => {
+          const apiRequest = services.getApiRequest(reqId);
+          setRunningApi(apiRequest.step);
+          if(Services.errorResolver({ apiRequest, dispatch })) return; // break if has error
+          setResponse(apiRequest.data);
+        });
+      }
   }, [collectedData, stage, runningApi, response, dataLink, setResponse, dispatch, state.authData]);
 
   function getData(data) {
