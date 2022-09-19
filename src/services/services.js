@@ -132,4 +132,7 @@ export default class Services extends Auth {
     this.addHeaders("Content-Type", "application/json");
     return this.resolver({ expectedCode: 200, id, path: `/product/edit`, method: 'put', body: updatedProduct });
   }
+  getAutomationProducts({ id = this.createApiRequest('getAutomationProducts', 'obter uma lista de produtos de automação') } = {}) {
+    return this.resolver({ id, expectedCode: 200, path: '/product/automation', method: 'get' });
+  }
 }

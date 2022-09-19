@@ -15,7 +15,7 @@ import LocationSelect from './LocationSelect';
 
 import { Context } from '../../../store/Store';
 
-import { useGetApiData } from '../../../hooks/useGetApiData';
+import Services from '../../../services/services';
 import { budgetModel } from '../../../config';
 
 const useStyles = makeStyles((theme) => ({
@@ -29,8 +29,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function AddItem({ addedProductsList, add }) {
   const classes = useStyles();
-  const [, dispatch] = React.useContext(Context);
-  const getData = useGetApiData({ type: 'get', endPoint: '/product/automation', dispatch });
+  const [state, dispatch] = React.useContext(Context);
   const [runningApi, setRunningApi] = React.useState('stopped');
   const [productsList, setProductsList] = React.useState([]);
   const [selectedFloor, setSelectedFloor] = React.useState('off');
@@ -43,9 +42,15 @@ export default function AddItem({ addedProductsList, add }) {
 
   React.useEffect(() => {
     if (runningApi === 'stopped') {
-      getData({ params: {}, getResponse: setProductsList, handleStatus: setRunningApi });
+      const services = new Services(state.authData);
+      services.getAutomationProducts().then(reqId => {
+        const apiRequest = services.getApiRequest(reqId);
+        setRunningApi(apiRequest.step);
+        if(Services.errorResolver({ apiRequest, dispatch })) return;
+        setProductsList(apiRequest.data);
+      });
     }
-  }, [runningApi, getData]);
+  }, [runningApi, state.authData, dispatch, setRunningApi, setProductsList]);
 
   function getProductsList() {
     if (runningApi !== 'done') {
