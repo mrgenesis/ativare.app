@@ -81,6 +81,9 @@ function types() {
     isFalse(v) {
       return v === false;
     }
+    isTrue(v) {
+      return v === true;
+    }
     isFalseValue(v) {
       return !v;
     }
