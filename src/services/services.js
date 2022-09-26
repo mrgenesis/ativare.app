@@ -135,4 +135,7 @@ export default class Services extends Auth {
   getAutomationProducts({ id = this.createApiRequest('getAutomationProducts', 'obter uma lista de produtos de automação') } = {}) {
     return this.resolver({ id, expectedCode: 200, path: '/product/automation', method: 'get' });
   }
+  getProductsByCategory({ categoryName, id = this.createApiRequest('getProductsByCategory', 'obter uma lista de produtos com base em sua categoria') } = {}) {
+    return this.resolver({ id, expectedCode: 200, path: `/product/find-by/?key=category&value=${categoryName}`, method: 'get' });
+  }
 }
