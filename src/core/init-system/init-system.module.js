@@ -52,6 +52,7 @@ class InitSystem {
       .then(() => this.loadPermissionGroups())
       .catch(err => reject(err))
       .then(() => this.loadRoutes())
+      .then(() => this.loadFixedMateirals())
       .catch(err => reject(err))
       .then(() => {
         this.#AppModule.addErrorHandler();
@@ -88,6 +89,14 @@ class InitSystem {
         this.#context.groups[gp.name] = gp.granteds;
       });
       console.warn('Lista de grupos definida no app:', this.#context.groups);
+    });
+  }
+  loadFixedMateirals() {
+    return this.#context.model.material.find({ code: { $lt: 0 } }).then(fMaterial => {
+      this.#context.fixedMaterials = {};
+      fMaterial.forEach(fm => {
+        this.#context.fixedMaterials[fm.code] = fm;
+      });
     });
   }
 
