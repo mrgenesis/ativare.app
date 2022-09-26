@@ -19,12 +19,12 @@ export default function PrivateDetail({ own, hiddenFunc, budgetFloors, privateDe
         </Typography>
         <Divider component="li" />
       </div>
-      <div>
+      {(AURAServer.amountPrice) && (<div>
         <Typography color="textSecondary" variant="caption">
           <Typography component='span' variant='inherit' title='Um por orçamento'>{AURAServer.name}: R${AURAServer.unitPrice}. </Typography>
         </Typography>
         <Divider component="li" />
-      </div>
+      </div>)}
 
       {budgetFloors.map((floorName, index) => {
         const locationConfigsNames = Object.keys(details[floorName].totalConfigs);
@@ -43,7 +43,7 @@ export default function PrivateDetail({ own, hiddenFunc, budgetFloors, privateDe
           </div>
         );
         const Item = ({ item, haveCalc }) => (
-          <Fragment>
+          ((item.amount > 0) && <Fragment>
             <Box marginTop={1} marginBottom={1}>
               <div>
                 <Typography variant="body1" display="inline">{item.name}</Typography>
@@ -56,7 +56,7 @@ export default function PrivateDetail({ own, hiddenFunc, budgetFloors, privateDe
               {(haveCalc) ? <Calcs material={item} /> : ''}
             </Box> 
             <Divider component="li" />
-          </Fragment>
+          </Fragment>)
         );
 
         return (
