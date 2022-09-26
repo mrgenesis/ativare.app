@@ -1,12 +1,18 @@
 'use strict';
 
 class I2CKeyPad {
-  constructor () {
-    this.name = 'Key Pad IC2';
-    this.unitPrice = 120;        
+  #code = '-3';
+  constructor (fixedMaterialsData) {
+    const i2c = fixedMaterialsData[this.#code];
+    if (!i2c) {
+      throw new Error(`O material código ${this.#code} dever ser lançado para fornecer dados para a class ${this.constructor.name}`);
+    }
+    this.name = i2c.name;
+    this.unitPrice = i2c.unitPrice;        
+    this.ms = i2c.ms;   
+
     this.amount = 0;
     this.amountPrice = 0;      
-    this.ms = 18.9;      
   }
   set addAmount(amount) {
     this.amount += parseInt(amount, 10);

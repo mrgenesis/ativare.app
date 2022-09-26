@@ -1,10 +1,15 @@
 'use strict';
 
 class Point {
-  constructor () {
-    this.name = 'Multiplexador';
-    this.unitPrice = 120;        
-    this.portLimit = 10;        
+  #code = '-6';
+  constructor (fixedMaterialsData) {
+    const point = fixedMaterialsData[this.#code];
+    if (!point) {
+      throw new Error(`O material código ${this.#code} dever ser lançado para fornecer dados para a class ${this.constructor.name}`);
+    }
+    this.name = point.name;
+    this.unitPrice = point.unitPrice;        
+    this.portLimit = point.limit;        
     this.amount = 0;
     this.amountPrice = 0;      
   }

@@ -1,9 +1,14 @@
 'use strict';
 
 class Pulser {
-  constructor () {
-    this.name = 'Pulsador';
-    this.unitPrice = 120;        
+  #code = '-7';
+  constructor (fixedMaterialsData) {
+    const pulser = fixedMaterialsData[this.#code];
+    if (!pulser) {
+      throw new Error(`O material código ${this.#code} dever ser lançado para fornecer dados para a class ${this.constructor.name}`);
+    }
+    this.name = pulser.name;
+    this.unitPrice = pulser.unitPrice;        
     this.amount = 0;
     this.amountPrice = 0;      
   }

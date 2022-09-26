@@ -1,11 +1,16 @@
 'use strict';
-//{ name: 'Painel Montado', unitPrice: 1300, amount }
+
 class Panel {
-  constructor () {
-    this.name = 'Painel Montado';
-    this.unitPrice = 1300;        
-    this.amount = 1;
-    this.amountPrice = 1300;      
+  #code = '-5';
+  constructor (fixedMaterialsData, { amount = 0 }) {
+    const panel = fixedMaterialsData[this.#code];
+    if (!panel) {
+      throw new Error(`O material código ${this.#code} dever ser lançado para fornecer dados para a class ${this.constructor.name}`);
+    }
+    this.name = panel.name;
+    this.unitPrice = panel.unitPrice;        
+    this.amount = amount;
+    this.amountPrice = this.amount * panel.unitPrice;
   }
 }
 module.exports = Panel;
