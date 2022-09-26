@@ -9,9 +9,19 @@ class Subscriber {
     const EventEmitter = require('events');
     const ee = new EventEmitter();
 
+    ee.on('update_fixed_materials', (updated) => this.updateFixedMaterials(updated));
     ee.on('send_email', (body, data) => this.sendEmail(body, data));
     ee.on('app_error', err => this.appError(err));
     return ee;
+  }
+  updateFixedMaterials(updated) {
+    console.log('updated', updated)
+    if (updated.code < 0) {
+      this.#context.fixedMaterials = {
+        ...this.#context.fixedMaterials,
+        [updated.code]: updated
+      };
+    }
   }
   sendEmail(body, data) {
     //return;

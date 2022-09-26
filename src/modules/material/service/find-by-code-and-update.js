@@ -8,6 +8,7 @@ function setContext(context) {
       if(!result) {
         throw new context.AppError.ErrorCreator('O código informado não existe. Nenhum item foi atualizado.', 400);
       }
+      context.Subscriber.emit('update_fixed_materials', result);
       return result;
     });
   }
