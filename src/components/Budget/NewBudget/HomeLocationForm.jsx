@@ -5,7 +5,8 @@ import Hidden from '../../Utils/Hidden';
 import NotInterestedIcon from '@material-ui/icons/NotInterested';
 
 
-export default function HomeLocationForm({ addLocation, selectedFloor, locations }) {
+export default function HomeLocationForm({ addLocation, selectedFloor, locations, budgetType }) {
+  const isAutomation = budgetType === 'automation';
   const [addLocationStatusButton, setAddLocationStatusButton] = React.useState(true);
   const addLocationMessageButton = (addLocationStatusButton) ? 'Ocultar formulário' : 'Exibir formulário';
   
@@ -83,11 +84,14 @@ export default function HomeLocationForm({ addLocation, selectedFloor, locations
 
       <Hidden status={(!addLocationStatusButton)}>
         <Box sx={{ minWidth: 120 }}>
-          <TextField onChange={handleHomelocation} error={homeLocationError} helperText={homeLocationError&&homeLocationErrorMessage} value={homeLocation} id="standardd-basic" label="Local da casa" variant="standard" fullWidth />
-          <TextField onChange={handleI2CKeyPad} value={I2CKeyPad} id="stasndasrd-basicx" type='number' placeholder='Informe um número' label="Key Pad I2C" variant="standard" />
-          <TextField onChange={handleMultiplexedKeyPad} value={multiplexedKeyPad} id="standard-basicx" type='number' placeholder='Informe um número' label="Key Pad Multiplexado" variant="standard" />
-          <TextField onChange={handlePoint} value={point} id="sstandard-bsasicx" type='number' placeholder='Informe um número' label="Ponto" variant="standard" />
-          <TextField onChange={handlePulser} value={pulser} id="stsandard-basicx" type='number' placeholder='Informe um número' label="Pulsador" variant="standard" />
+          <TextField onChange={handleHomelocation} error={homeLocationError} helperText={homeLocationError&&homeLocationErrorMessage} value={homeLocation} id="standardd-basic" label="Local" placeholder='Exemplo: Cozinha' variant="standard" fullWidth />
+          { isAutomation &&
+          (<div>
+            <TextField onChange={handleI2CKeyPad} value={I2CKeyPad} id="stasndasrd-basicx" type='number' placeholder='Informe um número' label="Key Pad I2C" variant="standard" />
+            <TextField onChange={handleMultiplexedKeyPad} value={multiplexedKeyPad} id="standard-basicx" type='number' placeholder='Informe um número' label="Key Pad Multiplexado" variant="standard" />
+            <TextField onChange={handlePoint} value={point} id="sstandard-bsasicx" type='number' placeholder='Informe um número' label="Ponto" variant="standard" />
+            <TextField onChange={handlePulser} value={pulser} id="stsandard-basicx" type='number' placeholder='Informe um número' label="Pulsador" variant="standard" />
+          </div>)}
           <Button fullWidth value='fim' onClick={handleAdd} variant='text'><strong>Adicionar ambiente</strong></Button>
         </Box>
         <br />

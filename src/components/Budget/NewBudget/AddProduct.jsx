@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function AddItem({ addedProductsList, add }) {
+export default function AddItem({ addedProductsList, add, budgetType }) {
   const classes = useStyles();
   const [state, dispatch] = React.useContext(Context);
   const [runningApi, setRunningApi] = React.useState('stopped');
@@ -42,15 +42,16 @@ export default function AddItem({ addedProductsList, add }) {
 
   React.useEffect(() => {
     if (runningApi === 'stopped') {
+      const categories = { automation: "Automação", eletric: "Elétrica" }
       const services = new Services(state.authData);
-      services.getAutomationProducts().then(reqId => {
+      services.getProductsByCategory({ categoryName: categories[budgetType] }).then(reqId => {
         const apiRequest = services.getApiRequest(reqId);
         setRunningApi(apiRequest.step);
         if(Services.errorResolver({ apiRequest, dispatch })) return;
         setProductsList(apiRequest.data);
       });
     }
-  }, [runningApi, state.authData, dispatch, setRunningApi, setProductsList]);
+  }, [budgetType, runningApi, state.authData, dispatch, setRunningApi, setProductsList]);
 
   function getProductsList() {
     if (runningApi !== 'done') {
@@ -150,7 +151,7 @@ export default function AddItem({ addedProductsList, add }) {
         ))}
       </ButtonGroup>
       <Hidden status={(selectedFloor === 'off')}>
-        <HomeLocationForm addLocation={handleLocations} selectedFloor={selectedFloor} locations={locations} handleDeleteLocation={handleDeleteLocation} />
+        <HomeLocationForm budgetType={budgetType} addLocation={handleLocations} selectedFloor={selectedFloor} locations={locations} handleDeleteLocation={handleDeleteLocation} />
         <EnvironmentItems locations={locations} handleDeleteLocation={handleDeleteLocation} />
         <form onSubmit={handleSubmit(execAdd)} className={classes.root}>
           <Typography color="textSecondary"  variant='body1'>

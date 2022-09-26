@@ -5,7 +5,7 @@ import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
 import Hidden from '../../Utils/Hidden';
 import AddProduct from './AddProduct';
 
-export default function NovoOrcamento({ submit }) {
+export default function NovoOrcamento({ submit, budgetType }) {
   const floors = [];
   const [addedProductsList, setAddedProductsList] = React.useState([]);
   const [hiddenMessageErrorSave, setHiddenMessageErrorSave] = React.useState(true);
@@ -26,7 +26,7 @@ export default function NovoOrcamento({ submit }) {
   
   return (
     <>
-      <AddProduct addedProductsList={addedProductsList} add={setAddedProductsList} />
+      <AddProduct addedProductsList={addedProductsList} add={setAddedProductsList} budgetType={budgetType} />
 
       <br />
       <form

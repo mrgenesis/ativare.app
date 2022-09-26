@@ -6,6 +6,7 @@ import MessageStatus from '../Utils/MessageStatus';
 import { Context } from '../../store/Store';
 import Services from '../../services/services';
 import GetCustomerData from './NewBudget/GetCustomerData';
+import SetBudgetType from "./NewBudget/SetBudgetType";
 
 export default function New() {
   const [state, dispatch] = React.useContext(Context);
@@ -17,8 +18,9 @@ export default function New() {
     , [stage, setStage] = React.useState(0)
     , next = () => setStage(stage + 1)
     , componentes = [
+      <SetBudgetType submit={getData} />,
       <GetCustomerData submit={getData} />,
-      <GetBudgetProductsList submit={getData} />,
+      <GetBudgetProductsList submit={getData} budgetType={collectedData.type} />,
       <MessageStatus
         status={false}
         loading={runningApi !== 'done'}
@@ -34,7 +36,7 @@ export default function New() {
           text: 'Ver orçamento'
         });
       }
-      if (stage === 2 && runningApi === 'stopped') {
+      if (stage === 3 && runningApi === 'stopped') {
         const services = new Services(state.authData);
         services.createBudget({ newBudget: collectedData }).then(reqId => {
           const apiRequest = services.getApiRequest(reqId);
