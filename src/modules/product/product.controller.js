@@ -2,7 +2,7 @@
 
 module.exports = function productController(resources) {
   const router = require('express').Router();
-  const { _r, new_w, automation_r, edit_u, [':productId_r']: productId_r } = resources;
+  const { _r, new_w, automation_r, edit_u, [':productId_r']: productId_r, ['find-by_r']: findBy_r } = resources;
 
   router[_r.method](_r.relativePath, _r.middlewares, async (req, res, next) => {
     try {
@@ -26,6 +26,18 @@ module.exports = function productController(resources) {
       new_w.error(next, error);
     }
     
+  });
+  router[findBy_r.method](findBy_r.relativePath, findBy_r.middlewares, async (req, res, next) => {
+    const { key, value } = req.query;
+    try {
+      const automationItems = await findBy_r.service({
+        [key]: value
+      });
+      res.status(200).send([...automationItems]);
+  
+    } catch (error) {
+      new_w.error(next, error);
+    }
   });
   router[automation_r.method](automation_r.relativePath, automation_r.middlewares, async (req, res, next) => {
     try {

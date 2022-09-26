@@ -7,6 +7,7 @@ function productRoute(context) {
     new RouteFactory('new', 'post', ['create'], 'create'),
     new RouteFactory('', 'get', ['find'], 'find'),
     new RouteFactory('automation', 'get', ['find'], 'find'),
+    new RouteFactory('find-by', 'get', ['find'], 'find'),
     new RouteFactory('edit', 'put', ['update'], 'update'),
     new RouteFactory(':productId', 'get', ['findOne'], 'findOne'),
   ];
