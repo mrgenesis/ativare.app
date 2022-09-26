@@ -14,7 +14,7 @@ class FloorCreator {
     this.uDX201 = new fixedMaterialsConstruc.uDX201(fixedMaterialsData);
     this.ex214 = new fixedMaterialsConstruc.ex214(fixedMaterialsData);
     
-    this.panel = new fixedMaterialsConstruc.panel(fixedMaterialsData, fixedAmount);
+    this.panel = new fixedMaterialsConstruc.panel(fixedMaterialsData, fixedAmount.panel);
     this.products = {};
     this.materials = {};
     this.amountMs = 0;

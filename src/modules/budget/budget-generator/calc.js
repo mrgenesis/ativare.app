@@ -9,7 +9,7 @@ class BudgetGenerator {
     this.permissionsExplicitStatus = permissionsExplicitStatus;
 
     this.keys = { floors: [], homeLocations: {} };
-    this.details = new (require('./details-creator'))(this.#context.fixedMaterials, budget.type);
+    this.details = new (require('./details-creator'))(this.#context.fixedMaterials, budget.type || "automation");
     this.result = {};
     this.setKeys();
   }

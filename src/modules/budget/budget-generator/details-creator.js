@@ -39,7 +39,7 @@ class DetailsCreator {
   }
   setAURAServer() {    
     const fixedMaterialsContruc = require('./fixed-materials/fixed-materials');
-    this.AURAServer = new fixedMaterialsContruc.AURAServer(this.fixedMaterialsData, this.fixedMaterialsSelectedAmount);
+    this.AURAServer = new fixedMaterialsContruc.AURAServer(this.fixedMaterialsData, this.fixedMaterialsSelectedAmount.auraServer);
     this.#total += this.AURAServer.amountPrice;
   }
   setPanel(floorName) {
