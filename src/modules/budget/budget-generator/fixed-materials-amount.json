@@ -1,0 +1,11 @@
+{
+  "eletric": {},
+  "automation": {
+    "auraServer": {
+      "amount": 1
+    },
+    "panel": {
+      "amount": 1
+    }
+  }
+}

@@ -1,16 +1,22 @@
 'use strict';
+const fixedMaterialsAmount = require('./fixed-materials-amount');
 
 class DetailsCreator {
 
   #total = 0;
   #floors = [];
+  fixedMaterialsSelectedAmount;
+  constructor(fixedMaterials, budgetType) {
+    this.fixedMaterialsData = fixedMaterials;
+    this.fixedMaterialsSelectedAmount = fixedMaterialsAmount[budgetType];
+  }
   
   set addTotal(x) {
     this.#total += parseInt(x, 10);
   }
   setNewFloorIfHaveNot(floorName) {
     const Floor = require('./floor-creator');
-    this.addPropertyIfHaveNot(this, floorName, new Floor);
+    this.addPropertyIfHaveNot(this, floorName, new Floor(this.fixedMaterialsData, this.fixedMaterialsSelectedAmount));
   }
   addPropertyIfHaveNot(obj, property, initialValue) {
     if (obj.hasOwnProperty(property)) {
@@ -27,20 +33,24 @@ class DetailsCreator {
     this.#floors.forEach(floorName => {
       this.setUDX201(floorName);
       this.setEx214(floorName);
+      this.setPanel(floorName);
       this.#total += this[floorName].amountPrice;
     });
   }
   setAURAServer() {    
-    const fixedMaterials = require('./fixed-materials/fixed-materials');
-    this.AURAServer = new fixedMaterials.AURAServer;
+    const fixedMaterialsContruc = require('./fixed-materials/fixed-materials');
+    this.AURAServer = new fixedMaterialsContruc.AURAServer(this.fixedMaterialsData, this.fixedMaterialsSelectedAmount);
+    this.#total += this.AURAServer.amountPrice;
+  }
+  setPanel(floorName) {
+    this[floorName].addPrice = this[floorName].panel.amountPrice;
   }
   setUDX201(floorName) {
     this[floorName].uDX201.setAmount(this[floorName].amountMs);
     this[floorName].addPrice = this[floorName].uDX201.amountPrice;
   }
   setEx214(floorName) {
-    // TODO: Verificar se ao adicionar mais uDX201 aumentará a quantidade de portas
-    this[floorName].ex214.setAmount(this[floorName].amountPorts);
+    this[floorName].ex214.setAmount(this[floorName].amountPorts, this[floorName].uDX201.portLimit);
     this[floorName].addPrice = this[floorName].ex214.amountPrice;
   }
   getTotal() {
