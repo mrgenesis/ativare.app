@@ -34,12 +34,12 @@ function setContext(context) {
         name: authInfo.name,
         code: authInfo.oid
       };
-    const { productsList, customer } = body;
+    const { productsList, customer, type } = body; // TODO: get type "automation | aletric"
     const budget = new Budget(productsList);
 
     budget.generateItems();
     const items = budget.getItems();
-    newBudget = { items, own, customer };
+    newBudget = { items, own, customer, type };
     const { code } = await context.model.budget.create(newBudget);
     return code;
   }
