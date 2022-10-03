@@ -15,6 +15,13 @@ class UserHendler {
   get adicionalsResources() {
     return [ ...this.#adicionalsResources ];
   }
+  getUserData() {
+    return {
+      email: this.#token.preferred_username,
+      name: this.#token.name,
+      code: this.#token.oid
+    }
+  }
   isId(id) {
     return id === this.id;
   }
