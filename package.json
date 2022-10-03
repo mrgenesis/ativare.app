@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@azure/msal-node": "^1.12.1",
+    "@sendgrid/mail": "^7.7.0",
     "aws-sdk": "^2.1091.0",
     "bluebird": "^3.5.1",
     "debug": "~2.6.9",
