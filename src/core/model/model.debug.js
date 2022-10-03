@@ -9,8 +9,8 @@ function debug() {
   const debugSchema = new mongoose.Schema({
     errorId: { type: String, unique: true },
     rawData: { type: Object },
-    message: { type: String },
     createdAt: { type: Date, default: (new Date()).toUTCString() },
+    supportStatus: { type: String, default: 'opened' }
   });
   const Debug = mongoose.model('debug', debugSchema);
   
