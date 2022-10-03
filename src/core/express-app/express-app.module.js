@@ -79,9 +79,12 @@ class ExpressApp {
   }
   addErrorHandler() {
     const AppError = this.#context.AppError;
-    this.#app.use(function errorHandler(err, _, res, __) {
+    const Subscriber = this.#context.Subscriber;
+    this.#app.use(function errorHandler(err, req, res, __) {
       const error = AppError.formatter(err);
-      res.status(err.statusCode).json(error.response());
+      error.setSentData(req);
+      error.setResponser(res);
+      Subscriber.emit('error_registry', error);
     });
   }
 }

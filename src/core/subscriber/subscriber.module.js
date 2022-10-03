@@ -1,18 +1,64 @@
 'use strict';
+const EventEmitter = require('events');
+const sendgrid = require('./subscriber.sendgrid');
 
-// const ee = new EventEmitter();
-
-class Subscriber {
+class Subscriber extends EventEmitter {
   #context;
   constructor(context) {
+    super();
     this.#context = context;
-    const EventEmitter = require('events');
-    const ee = new EventEmitter();
 
-    ee.on('update_fixed_materials', (updated) => this.updateFixedMaterials(updated));
-    ee.on('send_email', (body, data) => this.sendEmail(body, data));
-    ee.on('app_error', err => this.appError(err));
-    return ee;
+    this.on('error_registry', (error) => this.errorRegistry(error));
+    this.on('update_fixed_materials', (updated) => this.updateFixedMaterials(updated));
+    this.on('send_email', (body, data) => this.sendEmail(body, data));
+    this.on('app_error', err => this.appError(err));
+  }
+  async errorRegistry(error) {
+    const Types = this.#context.Helper.types();
+    const apiKey = this.#context.appConfig.vendor.emailSender.sendgrid.apiKey;
+    if (Types.isFalseValue(error.isAppError) || Types.areDifferents(error.statusCode, 500)) {
+      error.res.status(error.statusCode).json(error.response());
+      return;
+    }
+    try {
+      this.#context.model.debug().find({ supportStatus: 'opened' }).then(openedList => {
+        const errorLocationExists = openedList.find(item => item.rawData.lastStack === error.internalInfo({ stringify: false }).lastStack);
+        if (Types.isUndefined(errorLocationExists)) {
+          const data = error.internalInfo({ stringify: false });
+            sendgrid({
+              apiKey,
+              from: this.#context.appConfig.fromEmail,
+              to: this.#context.appConfig.supportEmail,
+              subject: `${data.message} - ${data.lastStack}`,
+              body: error.internalInfo()
+            })
+              .then(() => {
+                error.putAditionalMessage('Abri um chamado automaticamente. Entre em contato com o administrador para consultar o andamento');
+                this.#context.model.debug().create({
+                  errorId: error.errorId,
+                  rawData: error.internalInfo({ stringify: false })
+                });
+                error.res.status(error.statusCode).json(error.response());
+              })
+              .catch(err => {
+                error.putAditionalMessage('Houve uma tentativa de abrir um chamado automaticamente, mas ocorreu um novo erro.');
+                console.error(`\n --- ${new Date()} ---\n`, error, '\nDetalhes:', JSON.stringify(err), '\n------------------------------\n');
+                error.res.status(error.statusCode).json(error.response());
+              });
+          return;
+        }
+        error.putAditionalMessage(`O erro "${errorLocationExists.errorId}" é semelhante e já está sendo corrigido. Contate o administrador.`);
+        error.res.status(error.statusCode).json(error.response());
+      })
+        .catch((err) => {
+        error.putAditionalMessage(`${err.message}`);
+        error.res.status(error.statusCode).json(error.response())
+      });
+      
+    } catch (e) {
+      error.putAditionalMessage(`${e.message}`);
+      console.error('Erro para enviar o mail para abrir o chamado: ', e); 
+    }
   }
   updateFixedMaterials(updated) {
     console.log('updated', updated)
