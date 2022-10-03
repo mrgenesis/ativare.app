@@ -21,6 +21,13 @@ function appConfig(context) {
   }
 
   return {
+    "vendor": {
+      "emailSender": {
+        "sendgrid": {
+          "apiKey": process.env.SENDGRID_API_KEY
+        }
+      }
+    },
     "databases": {
       "mongodb": {
         "srv": true,
@@ -55,6 +62,8 @@ function appConfig(context) {
     "dataHost": {
       "frontendBaseUrl": process.env.FRONTEND_BASE_URL
     },
+    "supportEmail": process.env.SUPPORT_EMAIL,
+    "fromEmail": process.env.FROM_EMAIL,
     ...customConfig
   }
 }
