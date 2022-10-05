@@ -29,7 +29,7 @@ class AppError extends Error {
     this.data.param = req.param;
     this.data.query = req.query;
     this.data.body = req.body;
-    this.user = req.user.getUserData();
+    this.user = typeof req?.user?.getUserData === 'function' ? req.user.getUserData() : { email: 'name', name: 'none', code: 'none' };
   }
   setResponser(res) {
     this.#res = res;

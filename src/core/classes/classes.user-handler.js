@@ -36,12 +36,16 @@ class UserHendler {
   }
   isGranted(src, groups) {
     if(this.isAdmin()) {
-      this.#adicionalsResources = groups[this.role]['*'];
-      return true;
+      this.#adicionalsResources = groups?.[this.role]?.['*'];
+      if (this.#adicionalsResources) {
+        return true;
+      }
     }
     if (this.comumUserGrant(src.arn, groups[this.role])) {
       this.#adicionalsResources = groups[this.role][src.arn];
-      return true;
+      if (this.#adicionalsResources) {
+        return true;
+      }
     }
     return false;
   }
