@@ -64,6 +64,7 @@ function appConfig(context) {
     },
     "supportEmail": process.env.SUPPORT_EMAIL,
     "fromEmail": process.env.FROM_EMAIL,
+    "AdminGroupName": process.env.ADMIN_GROUP_NAME,
     ...customConfig
   }
 }

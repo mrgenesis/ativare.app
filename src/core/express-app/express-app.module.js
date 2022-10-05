@@ -41,7 +41,7 @@ class ExpressApp {
     };
     const bearerStrategy = new BearerStrategy(optionsConfigured, (token, done) => {
       // Send user info using the second argument
-      const userProperty = new this.#context.Classes.UserHandler(token);
+      const userProperty = new this.#context.Classes.UserHandler(token, this.#context);
       done(null, userProperty/* req.user */, token);
     });
     this.#app.use(passport.initialize());

@@ -1,16 +1,20 @@
 'use strict';
 
 class UserHendler {
-  #token;
+  #token; #context;
   #adicionalsResources;
-  constructor(token) {
+  constructor(token, context) {
     this.#token = token;
+    this.#context = context;
   }
   get id() {
     return this.#token.oid;
   }
   get role() {
-    return this.#token.roles[0];
+    if (this.#token.roles) {
+      return this.#token.roles[0];      
+    }
+    return '';
   }
   get adicionalsResources() {
     return [ ...this.#adicionalsResources ];
@@ -26,7 +30,7 @@ class UserHendler {
     return id === this.id;
   }
   isAdmin() {
-    return this.#token.roles[0] === 'Admin.Materiais_e_Orcamentos';
+    return this.role === this.#context.appConfig.AdminGroupName;
   }
   comumUserGrant(sourceArn, group) {
     if (!sourceArn) return false;
