@@ -16,7 +16,7 @@ class Subscriber extends EventEmitter {
   async errorRegistry(error) {
     const Types = this.#context.Helper.types();
     const apiKey = this.#context.appConfig.vendor.emailSender.sendgrid.apiKey;
-    if (Types.isFalseValue(error.isAppError) || Types.areDifferents(error.statusCode, 500)) {
+    if (Types.isFalseValue(error.isAppError) || Types.areDifferents(error.statusCode, 500) || Types.areDifferents(process.env.NODE_ENV, 'production')) {
       error.res.status(error.statusCode).json(error.response());
       return;
     }
