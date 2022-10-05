@@ -17,7 +17,7 @@ const msalAadClientConfig = {
 
 const acquireTokenParams = {
   account: null,
-  scopes: ["api://ac0d838f-5e46-41af-bc6c-eb4de3c2548d/Ativare.Materiais_e_Orcamentos"]
+  scopes: ["api://ac0d838f-5e46-41af-bc6c-eb4de3c2548d/Ativare.Materiais_e_Orcamentos", "User.Read"]
 };
 
 export { apiConfig, msalAadClientConfig, acquireTokenParams };
