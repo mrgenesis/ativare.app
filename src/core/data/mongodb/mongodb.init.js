@@ -6,8 +6,6 @@ module.exports = function init(mongooseConfig){
     promiseLibrary: require('bluebird'),
     useUnifiedTopology: true,
     useNewUrlParser: true,
-    useCreateIndex: true,
-    useFindAndModify: false
   }
   , logConectionStr = str => (process.env.NODE_ENV === 'production') ? str.replace(mongooseConfig.password, '******** PASSWORD PRIVATE *****') : str
   , connectionString = this.prepateConnectionString(mongooseConfig);

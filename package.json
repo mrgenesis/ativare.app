@@ -16,7 +16,7 @@
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^3.6.6",
-    "mongoose": "^5.2.8",
+    "mongoose": "^6.6.5",
     "morgan": "~1.9.1",
     "passport": "^0.6.0",
     "passport-azure-ad": "^4.3.4"
