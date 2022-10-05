@@ -14,6 +14,6 @@ export default function Login() {
     });
   }
   return (
-    <Button size='large' onClick={singIn} margin='normal' variant='contained' color='primary'>Login</Button>
+    <Button size='large' fullWidth onClick={singIn} margin='normal' variant='contained' color='primary'>Entrar</Button>
   );
 }
